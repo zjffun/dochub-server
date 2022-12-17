@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { IPageInfo } from 'src/types';
 import { CreateRelationDto } from './dto/create-relation.dto';
 import { Relation, RelationsDocument } from './schemas/relations.schema';
 
@@ -14,6 +15,22 @@ export class RelationsService {
   async create(createCatDto: CreateRelationDto): Promise<Relation> {
     const createdCat = await this.relationsModel.create(createCatDto);
     return createdCat;
+  }
+
+  async getListGroupByPath(
+    pageInfo: IPageInfo,
+  ): Promise<{ _id: { fromPath: string; toPath: string } }[]> {
+    return this.relationsModel
+      .aggregate([
+        {
+          $group: {
+            _id: { fromPath: '$fromPath', toPath: '$toPath' },
+          },
+        },
+      ])
+      .skip(pageInfo.skip)
+      .limit(pageInfo.limit)
+      .exec();
   }
 
   async findAll(): Promise<Relation[]> {
