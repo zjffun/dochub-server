@@ -33,6 +33,17 @@ export class RelationsService {
       .exec();
   }
 
+  async find(condition) {
+    const doc = await this.relationsModel
+      .find({
+        fromPath: condition.fromPath,
+        toPath: condition.toPath,
+      })
+      .exec();
+
+    return doc;
+  }
+
   async findAll(): Promise<Relation[]> {
     return this.relationsModel.find().exec();
   }

@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "mongoose": "^6.8.0",
     "reflect-metadata": "^0.1.13",
+    "relation2-core": "^0.0.21",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
   },

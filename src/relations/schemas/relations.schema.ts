@@ -4,7 +4,7 @@ import { HydratedDocument } from 'mongoose';
 export type RelationsDocument = HydratedDocument<Relation>;
 
 @Schema({
-  collection: 'relation',
+  collection: 'relations',
 })
 export class Relation {
   @Prop()
