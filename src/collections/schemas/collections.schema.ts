@@ -6,6 +6,9 @@ export type CollectionsDocument = HydratedDocument<Collection>;
 @Schema({})
 export class Collection {
   @Prop()
+  nameId: string;
+
+  @Prop()
   name: string;
 
   @Prop()

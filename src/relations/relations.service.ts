@@ -18,18 +18,23 @@ export class RelationsService {
   }
 
   async getListGroupByPath(
-    pageInfo: IPageInfo,
+    condition: IPageInfo & { nameId: string },
   ): Promise<{ _id: { fromPath: string; toPath: string } }[]> {
     return this.relationsModel
       .aggregate([
+        {
+          $match: {
+            nameId: condition.nameId,
+          },
+        },
         {
           $group: {
             _id: { fromPath: '$fromPath', toPath: '$toPath' },
           },
         },
       ])
-      .skip(pageInfo.skip)
-      .limit(pageInfo.limit)
+      .skip(condition.skip)
+      .limit(condition.limit)
       .exec();
   }
 
@@ -38,6 +43,7 @@ export class RelationsService {
       .find({
         fromPath: condition.fromPath,
         toPath: condition.toPath,
+        nameId: condition.nameId,
       })
       .exec();
 

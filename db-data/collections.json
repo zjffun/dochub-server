@@ -1,0 +1,13 @@
+[
+  {
+    "_id": {
+      "$oid": "6395efa41051adabdd7c76e3"
+    },
+    "nameId": "MDN-zh-CN",
+    "name": "MDN zh-CN",
+    "groupName": "MDN",
+    "lang": "zh-CN",
+    "desc": "MDN 中文文档",
+    "__v": 0
+  }
+]

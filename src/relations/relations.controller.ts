@@ -7,6 +7,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import * as path from 'path';
+import { dataPath } from 'src/config';
 import { getPageInfo } from 'src/utils/page';
 import { CreateRelationDto } from './dto/create-relation.dto';
 import { RelationsService } from './relations.service';
@@ -25,9 +27,14 @@ export class RelationsController {
   async getListGroupByPath(
     @Query('page') page: string,
     @Query('pageSize') pageSize: string,
+    @Query('nameId') nameId: string,
   ): Promise<{ fromPath: string; toPath: string }[]> {
     const pageInfo = getPageInfo(page, pageSize);
-    const list = await this.relationsService.getListGroupByPath(pageInfo);
+
+    const list = await this.relationsService.getListGroupByPath({
+      ...pageInfo,
+      nameId,
+    });
     const result = list.map((d) => d._id);
 
     return result;
@@ -37,16 +44,18 @@ export class RelationsController {
   async getRelationViewerData(
     @Query('fromPath') fromPath: string,
     @Query('toPath') toPath: string,
+    @Query('nameId') nameId: string,
   ): Promise<any> {
     const { RelationServer, Relation: RelationClass } = await import(
       'relation2-core'
     );
 
-    const cwd = '/Users/zjf/gh/translated-content-relation';
+    const cwd = path.join(dataPath, nameId);
 
     const rawRelations = await this.relationsService.find({
       fromPath,
       toPath,
+      nameId,
     });
 
     const relations = rawRelations.map((rawRelation) => {
