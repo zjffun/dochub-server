@@ -7,10 +7,10 @@ import { Collection } from './schemas/collections.schema';
 export class CollectionsController {
   constructor(private readonly collectionsService: CollectionsService) {}
 
-  @Post()
-  async create(@Body() createRelationDto: CreateCollectionDto) {
-    await this.collectionsService.create(createRelationDto);
-  }
+  // @Post()
+  // async create(@Body() createRelationDto: CreateCollectionDto) {
+  //   await this.collectionsService.create(createRelationDto);
+  // }
 
   @Get()
   async findAll(): Promise<Collection[]> {
@@ -22,8 +22,8 @@ export class CollectionsController {
     return this.collectionsService.findOne(id);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.collectionsService.delete(id);
-  }
+  // @Delete(':id')
+  // async delete(@Param('id') id: string) {
+  //   return this.collectionsService.delete(id);
+  // }
 }

@@ -18,10 +18,10 @@ import { Relation } from './schemas/relations.schema';
 export class RelationsController {
   constructor(private readonly relationsService: RelationsService) {}
 
-  @Post()
-  async create(@Body() createRelationDto: CreateRelationDto) {
-    await this.relationsService.create(createRelationDto);
-  }
+  // @Post()
+  // async create(@Body() createRelationDto: CreateRelationDto) {
+  //   await this.relationsService.create(createRelationDto);
+  // }
 
   @Get('/getListGroupByPath')
   async getListGroupByPath(
@@ -84,8 +84,8 @@ export class RelationsController {
     return this.relationsService.findOne(id);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.relationsService.delete(id);
-  }
+  // @Delete(':id')
+  // async delete(@Param('id') id: string) {
+  //   return this.relationsService.delete(id);
+  // }
 }
