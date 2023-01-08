@@ -58,6 +58,27 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+# PM2
+
+Installation:
+
+```bash
+npm install pm2@latest -g
+```
+
+Start:
+
+```bash
+pm2 start dist/main.js --name dochub-server
+```
+
+Auto restart after system reboot:
+
+```bash
+pm2 startup systemd
+pm2 save
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
