@@ -13,8 +13,51 @@ export class RelationsService {
   ) {}
 
   async create(createCatDto: CreateRelationDto): Promise<Relation> {
-    const createdCat = await this.relationsModel.create(createCatDto);
-    return createdCat;
+    const createdRelation = await this.relationsModel.create(createCatDto);
+    return createdRelation;
+  }
+
+  async getOriginalLineNum(condition) {
+    let num = 0;
+
+    const results = await this.relationsModel
+      .find(condition, 'fromRange -_id')
+      .exec();
+
+    results.forEach(({ fromRange }) => {
+      num += fromRange[1] - fromRange[0] + 1;
+    });
+
+    return num;
+  }
+
+  async getTranslatedLineNum(condition) {
+    let num = 0;
+
+    const results = await this.relationsModel
+      .find(condition, 'fromRange -_id')
+      .exec();
+
+    results.forEach(({ fromRange }) => {
+      num += fromRange[1] - fromRange[0] + 1;
+    });
+
+    return num;
+  }
+
+  // TODO
+  async getConsistentLineNum(condition) {
+    let num = 0;
+
+    const results = await this.relationsModel
+      .find(condition, 'fromRange -_id')
+      .exec();
+
+    results.forEach(({ fromRange }) => {
+      num += fromRange[1] - fromRange[0] + 1;
+    });
+
+    return num;
   }
 
   async getListGroupByPath(
@@ -59,9 +102,9 @@ export class RelationsService {
   }
 
   async delete(id: string) {
-    const deletedCat = await this.relationsModel
+    const deletedRelation = await this.relationsModel
       .findByIdAndRemove({ _id: id })
       .exec();
-    return deletedCat;
+    return deletedRelation;
   }
 }

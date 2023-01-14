@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { CollectionsService } from './collections.service';
-import { CreateCollectionDto } from './dto/create-collection.dto';
 import { Collection } from './schemas/collections.schema';
 
 @Controller('collections')
@@ -14,13 +13,20 @@ export class CollectionsController {
 
   @Get()
   async findAll(): Promise<Collection[]> {
-    return this.collectionsService.findAll();
+    const collections = await this.collectionsService.findAll();
+
+    return collections;
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Collection> {
-    return this.collectionsService.findOne(id);
+  @Get('/setProgressInfo')
+  async setProgressInfo() {
+    return this.collectionsService.setProgressInfo();
   }
+
+  // @Get(':id')
+  // async findOne(@Param('id') id: string): Promise<Collection> {
+  //   return this.collectionsService.findOne(id);
+  // }
 
   // @Delete(':id')
   // async delete(@Param('id') id: string) {

@@ -30,6 +30,9 @@ export class Relation {
 
   @Prop()
   toRange: [number, number];
+
+  @Prop()
+  nameId: string;
 }
 
 export const RelationSchema = SchemaFactory.createForClass(Relation);

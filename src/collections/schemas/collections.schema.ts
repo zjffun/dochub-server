@@ -19,6 +19,15 @@ export class Collection {
 
   @Prop()
   desc: string;
+
+  @Prop()
+  originalLineNum: number;
+
+  @Prop()
+  translatedLineNum: number;
+
+  @Prop()
+  consistentLineNum: number;
 }
 
 export const CollectionSchema = SchemaFactory.createForClass(Collection);

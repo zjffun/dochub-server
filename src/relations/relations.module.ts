@@ -12,5 +12,6 @@ import { Relation, RelationSchema } from './schemas/relations.schema';
   ],
   controllers: [RelationsController],
   providers: [RelationsService],
+  exports: [RelationsService],
 })
 export class RelationsModule {}

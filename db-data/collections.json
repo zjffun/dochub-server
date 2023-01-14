@@ -4,10 +4,12 @@
       "$oid": "6395efa41051adabdd7c76e3"
     },
     "nameId": "MDN-zh-CN",
-    "name": "MDN zh-CN",
+    "name": "MDN 中文文档",
     "groupName": "MDN",
     "lang": "zh-CN",
     "desc": "MDN 中文文档",
+    "docUrl": "mdn.dochub.zjffun.com",
+    "logoUrl": "https://avatars.githubusercontent.com/u/7565578?s=200&v=4",
     "__v": 0
   },
   {
@@ -15,10 +17,25 @@
       "$oid": "63b2c7d44483f452b5755acd"
     },
     "nameId": "rollup-js-zh-CN",
-    "name": "rollup.js zh-CN",
+    "name": "rollup.js 中文文档",
     "groupName": "rollup.js",
     "lang": "zh-CN",
     "desc": "rollup.js 中文文档",
+    "docUrl": "rollupjs.dochub.zjffun.com",
+    "logoUrl": "https://camo.githubusercontent.com/50e43473527a57747fb7cd9b0061355205ac9a2763207a78d9812ceef1da52c0/68747470733a2f2f726f6c6c75706a732e6f72672f6c6f676f2e737667",
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "63c180d7bc49c80c17189602"
+    },
+    "nameId": "jsdom-zh-CN",
+    "name": "jsdom 中文文档",
+    "groupName": "jsdom",
+    "lang": "zh-CN",
+    "desc": "jsdom 中文文档",
+    "docUrl": "https://translated-document.dochub.zjffun.com/github/jsdom.html",
+    "logoUrl": "https://github.com/jsdom/jsdom/raw/master/logo.svg",
     "__v": 0
   }
 ]

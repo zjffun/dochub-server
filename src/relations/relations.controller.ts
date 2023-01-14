@@ -79,10 +79,10 @@ export class RelationsController {
     return this.relationsService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Relation> {
-    return this.relationsService.findOne(id);
-  }
+  // @Get(':id')
+  // async findOne(@Param('id') id: string): Promise<Relation> {
+  //   return this.relationsService.findOne(id);
+  // }
 
   // @Delete(':id')
   // async delete(@Param('id') id: string) {
