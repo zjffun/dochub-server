@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { CollectionsService } from './collections.service';
 import { Collection } from './schemas/collections.schema';
 
-@Controller('collections')
+@Controller('api/collections')
 export class CollectionsController {
   constructor(private readonly collectionsService: CollectionsService) {}
 

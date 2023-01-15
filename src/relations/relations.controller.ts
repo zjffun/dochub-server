@@ -14,7 +14,7 @@ import { CreateRelationDto } from './dto/create-relation.dto';
 import { RelationsService } from './relations.service';
 import { Relation } from './schemas/relations.schema';
 
-@Controller('relations')
+@Controller('api/relations')
 export class RelationsController {
   constructor(private readonly relationsService: RelationsService) {}
 
