@@ -3,7 +3,7 @@ import * as path from 'path';
 
 let configJson: any = {};
 try {
-  configJson = JSON.stringify(
+  configJson = JSON.parse(
     fs
       .readFileSync(path.join(__dirname, '../', 'config.json'))
       .toString('utf8'),
