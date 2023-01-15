@@ -81,6 +81,28 @@ export class RelationsService {
       .exec();
   }
 
+  async getListGroupByPathCount(condition: {
+    nameId: string;
+  }): Promise<number> {
+    const queryResult = await this.relationsModel
+      .aggregate([
+        {
+          $match: {
+            nameId: condition.nameId,
+          },
+        },
+        {
+          $group: {
+            _id: { fromPath: '$fromPath', toPath: '$toPath' },
+          },
+        },
+        { $count: 'count' },
+      ])
+      .exec();
+
+    return queryResult[0]?.count || 0;
+  }
+
   async find(condition) {
     const doc = await this.relationsModel
       .find({

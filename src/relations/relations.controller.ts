@@ -28,14 +28,50 @@ export class RelationsController {
     @Query('page') page: string,
     @Query('pageSize') pageSize: string,
     @Query('nameId') nameId: string,
-  ): Promise<{ fromPath: string; toPath: string }[]> {
+  ) {
     const pageInfo = getPageInfo(page, pageSize);
 
     const list = await this.relationsService.getListGroupByPath({
       ...pageInfo,
       nameId,
     });
-    const result = list.map((d) => d._id);
+
+    const resultList = [];
+
+    for (const { _id: item } of list) {
+      const condition = {
+        fromPath: item.fromPath,
+        toPath: item.toPath,
+        nameId,
+      };
+      const originalLineNum = await this.relationsService.getOriginalLineNum(
+        condition,
+      );
+      const translatedLineNum =
+        await this.relationsService.getTranslatedLineNum(condition);
+      const consistentLineNum =
+        await this.relationsService.getConsistentLineNum(condition);
+
+      const resultItem = {
+        fromPath: item.fromPath,
+        toPath: item.toPath,
+        nameId,
+        originalLineNum,
+        translatedLineNum,
+        consistentLineNum,
+      };
+
+      resultList.push(resultItem);
+    }
+
+    const total = await this.relationsService.getListGroupByPathCount({
+      nameId,
+    });
+
+    const result = {
+      total,
+      list: resultList,
+    };
 
     return result;
   }
