@@ -1,0 +1,4 @@
+{
+  "dataPath": "/usr/share/com.zjffun.dochub",
+  "mongodbUri": "mongodb://127.0.0.1:27017/relation?directConnection=true"
+}
