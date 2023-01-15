@@ -8,7 +8,7 @@
     "groupName": "MDN",
     "lang": "zh-CN",
     "desc": "MDN 中文文档",
-    "docUrl": "mdn.dochub.zjffun.com",
+    "docUrl": "https://mdn.dochub.zjffun.com",
     "logoUrl": "https://avatars.githubusercontent.com/u/7565578?s=200&v=4",
     "__v": 0
   },
@@ -21,7 +21,7 @@
     "groupName": "rollup.js",
     "lang": "zh-CN",
     "desc": "rollup.js 中文文档",
-    "docUrl": "rollupjs.dochub.zjffun.com",
+    "docUrl": "https://rollupjs.dochub.zjffun.com",
     "logoUrl": "https://camo.githubusercontent.com/50e43473527a57747fb7cd9b0061355205ac9a2763207a78d9812ceef1da52c0/68747470733a2f2f726f6c6c75706a732e6f72672f6c6f676f2e737667",
     "__v": 0
   },
