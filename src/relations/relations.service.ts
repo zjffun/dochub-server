@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as path from 'path';
+import { dataPath } from 'src/config';
 import { IPageInfo } from 'src/types';
 import { CreateRelationDto } from './dto/create-relation.dto';
 import { Relation, RelationsDocument } from './schemas/relations.schema';
-
 @Injectable()
 export class RelationsService {
   constructor(
@@ -45,17 +46,33 @@ export class RelationsService {
     return num;
   }
 
-  // TODO
   async getConsistentLineNum(condition) {
+    const { Relation: RelationClass } = await import('relation2-core');
+
+    const cwd = path.join(dataPath, condition.nameId);
+
+    const results = await this.relationsModel.find(condition).exec();
+
     let num = 0;
 
-    const results = await this.relationsModel
-      .find(condition, 'fromRange -_id')
-      .exec();
+    for (const rawRelation of results.values()) {
+      try {
+        const rawRelationWithCwd = {
+          workingDirectory: cwd,
+          ...rawRelation.toObject(),
+        };
 
-    results.forEach(({ fromRange }) => {
-      num += fromRange[1] - fromRange[0] + 1;
-    });
+        const relation = new RelationClass(rawRelationWithCwd as any);
+        const dirty = await relation.getFromDirty();
+
+        if (!dirty) {
+          const { fromRange } = relation;
+          num += fromRange[1] - fromRange[0] + 1;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
     return num;
   }
