@@ -92,6 +92,7 @@ export class RelationsService {
             _id: { fromPath: '$fromPath', toPath: '$toPath' },
           },
         },
+        { $sort: { '_id.toPath': 1 } },
       ])
       .skip(condition.skip)
       .limit(condition.limit)
