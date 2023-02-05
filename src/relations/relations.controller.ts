@@ -94,6 +94,7 @@ export class RelationsController {
     const relations = rawRelations.map((rawRelation) => {
       return new RelationClass({
         workingDirectory: cwd,
+        id: rawRelation._id.toString(),
         ...rawRelation.toObject(),
       });
     });
