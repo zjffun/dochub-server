@@ -16,5 +16,8 @@ const dataPath = configJson.dataPath || '/usr/share/com.zjffun.dochub';
 const mongodbUri =
   configJson.mongodbUri ||
   'mongodb://127.0.0.1:27017/relation?directConnection=true';
+const secret =
+  configJson.secret ||
+  'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.';
 
-export { dataPath, mongodbUri };
+export { dataPath, mongodbUri, secret };

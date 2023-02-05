@@ -46,8 +46,16 @@ export class CollectionsService {
     return createdCollection;
   }
 
-  async findAll() {
-    return this.collectionsModel.find().exec();
+  async findAll(condition) {
+    return this.collectionsModel
+      .find()
+      .skip(condition.skip)
+      .limit(condition.limit)
+      .exec();
+  }
+
+  async count() {
+    return this.collectionsModel.find().count().exec();
   }
 
   async findOne(id: string): Promise<Collection> {

@@ -1,4 +1,5 @@
 {
   "dataPath": "/usr/share/com.zjffun.dochub",
-  "mongodbUri": "mongodb://127.0.0.1:27017/relation?directConnection=true"
+  "mongodbUri": "mongodb://127.0.0.1:27017/relation?directConnection=true",
+  "secret": "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE."
 }

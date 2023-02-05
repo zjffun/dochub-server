@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import * as path from 'path';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { dataPath } from 'src/config';
 import { getPageInfo } from 'src/utils/page';
 import { CreateRelationDto } from './dto/create-relation.dto';
@@ -18,12 +20,7 @@ import { Relation } from './schemas/relations.schema';
 export class RelationsController {
   constructor(private readonly relationsService: RelationsService) {}
 
-  // @Post()
-  // async create(@Body() createRelationDto: CreateRelationDto) {
-  //   await this.relationsService.create(createRelationDto);
-  // }
-
-  @Get('/getListGroupByPath')
+  @Get('/path-list')
   async getListGroupByPath(
     @Query('page') page: string,
     @Query('pageSize') pageSize: string,
@@ -76,7 +73,7 @@ export class RelationsController {
     return result;
   }
 
-  @Get('/getRelationViewerData')
+  @Get('/viewer-data')
   async getRelationViewerData(
     @Query('fromPath') fromPath: string,
     @Query('toPath') toPath: string,
@@ -115,13 +112,20 @@ export class RelationsController {
     return this.relationsService.findAll();
   }
 
-  // @Get(':id')
-  // async findOne(@Param('id') id: string): Promise<Relation> {
-  //   return this.relationsService.findOne(id);
-  // }
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<Relation> {
+    return this.relationsService.findOne(id);
+  }
 
-  // @Delete(':id')
-  // async delete(@Param('id') id: string) {
-  //   return this.relationsService.delete(id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async create(@Body() createRelationDto: CreateRelationDto) {
+    await this.relationsService.create(createRelationDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.relationsService.delete(id);
+  }
 }
