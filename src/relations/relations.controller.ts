@@ -20,7 +20,7 @@ import { Relation } from './schemas/relations.schema';
 export class RelationsController {
   constructor(private readonly relationsService: RelationsService) {}
 
-  @Get('/path-list')
+  @Get('path-list')
   async getListGroupByPath(
     @Query('page') page: string,
     @Query('pageSize') pageSize: string,
@@ -73,7 +73,7 @@ export class RelationsController {
     return result;
   }
 
-  @Get('/viewer-data')
+  @Get('viewer-data')
   async getRelationViewerData(
     @Query('fromPath') fromPath: string,
     @Query('toPath') toPath: string,
@@ -119,7 +119,9 @@ export class RelationsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createRelationDto: CreateRelationDto) {
+  async create(
+    @Body() createRelationDto: CreateRelationDto | CreateRelationDto[],
+  ) {
     await this.relationsService.create(createRelationDto);
   }
 

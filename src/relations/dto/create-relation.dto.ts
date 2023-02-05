@@ -1,10 +1,13 @@
 export class CreateRelationDto {
-  readonly fromRev: string;
+  readonly nameId: string;
   readonly fromPath: string;
-  readonly fromBaseDir: string;
-  readonly fromRange: [number, number];
-  readonly toRev: string;
   readonly toPath: string;
-  readonly toBaseDir: string;
+  readonly fromRange: [number, number];
   readonly toRange: [number, number];
+  readonly state: string;
+
+  readonly fromGitRev: string;
+  readonly toGitRev: string;
+  readonly fromGitWorkingDirectory: string;
+  readonly toGitWorkingDirectory: string;
 }

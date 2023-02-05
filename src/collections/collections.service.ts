@@ -13,30 +13,30 @@ export class CollectionsService {
     private readonly relationsService: RelationsService,
   ) {}
 
-  async setProgressInfo() {
-    const collections = await this.collectionsModel.find().exec();
+  async setProgressInfo(nameId: string) {
+    const condition = {
+      nameId: nameId,
+    };
 
-    for (const collection of collections) {
-      const condition = {
-        nameId: collection.nameId,
-      };
+    const collection = await this.collectionsModel.findOne(condition).exec();
 
-      const originalLineNum = await this.relationsService.getOriginalLineNum(
-        condition,
-      );
+    const originalLineNum = await this.relationsService.getOriginalLineNum(
+      condition,
+    );
 
-      const translatedLineNum =
-        await this.relationsService.getTranslatedLineNum(condition);
+    const translatedLineNum = await this.relationsService.getTranslatedLineNum(
+      condition,
+    );
 
-      const consistentLineNum =
-        await this.relationsService.getConsistentLineNum(condition);
+    const consistentLineNum = await this.relationsService.getConsistentLineNum(
+      condition,
+    );
 
-      collection.originalLineNum = originalLineNum;
-      collection.translatedLineNum = translatedLineNum;
-      collection.consistentLineNum = consistentLineNum;
+    collection.originalLineNum = originalLineNum;
+    collection.translatedLineNum = translatedLineNum;
+    collection.consistentLineNum = consistentLineNum;
 
-      await collection.save();
-    }
+    await collection.save();
 
     return true;
   }

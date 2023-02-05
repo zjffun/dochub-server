@@ -13,7 +13,9 @@ export class RelationsService {
     private readonly relationsModel: Model<RelationsDocument>,
   ) {}
 
-  async create(createCatDto: CreateRelationDto): Promise<Relation> {
+  async create(
+    createCatDto: CreateRelationDto | CreateRelationDto[],
+  ): Promise<Relation> {
     const createdRelation = await this.relationsModel.create(createCatDto);
     return createdRelation;
   }
@@ -36,7 +38,10 @@ export class RelationsService {
     let num = 0;
 
     const results = await this.relationsModel
-      .find(condition, 'fromRange -_id')
+      .find(
+        { ...condition, state: { $ne: 'to-be-translated' } },
+        'fromRange -_id',
+      )
       .exec();
 
     results.forEach(({ fromRange }) => {
@@ -51,7 +56,9 @@ export class RelationsService {
 
     const cwd = path.join(dataPath, condition.nameId);
 
-    const results = await this.relationsModel.find(condition).exec();
+    const results = await this.relationsModel
+      .find({ ...condition, state: { $ne: 'to-be-translated' } })
+      .exec();
 
     let num = 0;
 
@@ -144,6 +151,13 @@ export class RelationsService {
   async delete(id: string) {
     const deletedRelation = await this.relationsModel
       .findByIdAndRemove({ _id: id })
+      .exec();
+    return deletedRelation;
+  }
+
+  async deleteByNameId(nameId: string) {
+    const deletedRelation = await this.relationsModel
+      .deleteMany({ nameId: nameId })
       .exec();
     return deletedRelation;
   }
