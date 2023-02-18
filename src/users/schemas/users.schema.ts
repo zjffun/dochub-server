@@ -8,13 +8,25 @@ export type UsersDocument = HydratedDocument<User>;
 })
 export class User {
   @Prop()
-  username: string;
+  login: string;
 
   @Prop()
   password: string;
 
   @Prop()
   role: string;
+
+  @Prop()
+  name: string;
+
+  @Prop()
+  avatarUrl: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  githubId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

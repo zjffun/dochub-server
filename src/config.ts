@@ -19,5 +19,15 @@ const mongodbUri =
 const secret =
   configJson.secret ||
   'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.';
+const githubClientID = configJson.githubClientID;
+const githubClientSecret = configJson.githubClientSecret;
+const githubCallbackURL = configJson.githubCallbackURL;
 
-export { dataPath, mongodbUri, secret };
+export {
+  dataPath,
+  mongodbUri,
+  secret,
+  githubClientID,
+  githubClientSecret,
+  githubCallbackURL,
+};

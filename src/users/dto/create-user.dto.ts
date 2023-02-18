@@ -1,5 +1,9 @@
 export class CreateUserDto {
-  readonly username: string;
-  readonly password: string;
-  readonly role: string;
+  readonly login?: string;
+  readonly password?: string;
+  readonly role?: string;
+  readonly name?: string;
+  readonly avatarUrl?: string;
+  readonly email?: string;
+  readonly githubId?: string;
 }
