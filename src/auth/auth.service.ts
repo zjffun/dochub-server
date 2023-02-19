@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Document, Types } from 'mongoose';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/schemas/users.schema';
 import { UsersService } from 'src/users/users.service';
 
@@ -21,16 +20,16 @@ export class AuthService {
     return null;
   }
 
-  async findOrCreateGithubUser(userDto: CreateUserDto) {
-    const user = await this.usersService.findOne({
-      githubId: userDto.githubId,
+  async findOrCreateGithubUser(user: User) {
+    const currentUser = await this.usersService.findOne({
+      githubId: user.githubId,
     });
 
-    if (user) {
-      return user;
+    if (currentUser) {
+      return currentUser;
     }
 
-    return this.usersService.create(userDto);
+    return this.usersService.create(user);
   }
 
   async login(

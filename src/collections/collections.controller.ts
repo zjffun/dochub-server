@@ -10,6 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import Rules from 'src/decorators/rules';
+import { RolesGuard } from 'src/guards/roles.guard';
 import { RelationsService } from 'src/relations/relations.service';
 import { getPageInfo } from 'src/utils/page';
 import { CollectionsService } from './collections.service';
@@ -49,26 +51,30 @@ export class CollectionsController {
     return this.collectionsService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Rules('admin')
   async create(@Body() createRelationDto: CreateCollectionDto) {
     await this.collectionsService.create(createRelationDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put('progress-info/:nameId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Rules('admin')
   async setProgressInfoByNameId(@Param('nameId') nameId: string) {
     return this.collectionsService.setProgressInfo(nameId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Rules('admin')
   async delete(@Param('id') id: string) {
     return this.collectionsService.delete(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete('relations/:nameId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Rules('admin')
   async deleteRelations(@Param('nameId') nameId: string) {
     if (!nameId) {
       throw new Error('nameId is required');

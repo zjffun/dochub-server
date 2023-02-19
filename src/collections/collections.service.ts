@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RelationsService } from 'src/relations/relations.service';
-import { CreateCollectionDto } from './dto/create-collection.dto';
 import { Collection, CollectionsDocument } from './schemas/collections.schema';
 
 @Injectable()
@@ -41,8 +40,8 @@ export class CollectionsService {
     return true;
   }
 
-  async create(createCatDto: CreateCollectionDto): Promise<Collection> {
-    const createdCollection = await this.collectionsModel.create(createCatDto);
+  async create(collection): Promise<Collection> {
+    const createdCollection = await this.collectionsModel.create(collection);
     return createdCollection;
   }
 

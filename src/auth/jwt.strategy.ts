@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Document, Types } from 'mongoose';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { secret } from 'src/config';
-import { User } from 'src/users/schemas/users.schema';
 
 export interface IJwtUser {
   userId: string;

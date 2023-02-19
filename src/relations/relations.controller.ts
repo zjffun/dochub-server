@@ -11,6 +11,8 @@ import {
 import * as path from 'path';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { dataPath } from 'src/config';
+import Rules from 'src/decorators/rules';
+import { RolesGuard } from 'src/guards/roles.guard';
 import { getPageInfo } from 'src/utils/page';
 import { CreateRelationDto } from './dto/create-relation.dto';
 import { RelationsService } from './relations.service';
@@ -118,16 +120,18 @@ export class RelationsController {
     return this.relationsService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Rules('admin')
   async create(
     @Body() createRelationDto: CreateRelationDto | CreateRelationDto[],
   ) {
     await this.relationsService.create(createRelationDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Rules('admin')
   async delete(@Param('id') id: string) {
     return this.relationsService.delete(id);
   }

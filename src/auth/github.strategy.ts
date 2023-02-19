@@ -1,13 +1,13 @@
-import { Strategy } from 'passport-github2';
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-github2';
 import {
   githubCallbackURL,
   githubClientID,
   githubClientSecret,
 } from 'src/config';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/schemas/users.schema';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy) {
@@ -20,12 +20,11 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(accessToken, refreshToken, profile) {
-    const githubUser: CreateUserDto = {
-      githubId: profile._json.id,
-      name: profile._json.name,
-      avatarUrl: profile._json.avatar_url,
-      email: profile._json.email,
-    };
+    const githubUser = new User();
+    githubUser.githubId = profile._json.id;
+    githubUser.name = profile._json.name;
+    githubUser.avatarUrl = profile._json.avatar_url;
+    githubUser.email = profile._json.email;
 
     const user = await this.authService.findOrCreateGithubUser(githubUser);
     if (!user) {

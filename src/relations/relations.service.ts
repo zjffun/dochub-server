@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import * as path from 'path';
 import { dataPath } from 'src/config';
 import { IPageInfo } from 'src/types';
-import { CreateRelationDto } from './dto/create-relation.dto';
 import { Relation, RelationsDocument } from './schemas/relations.schema';
 @Injectable()
 export class RelationsService {
@@ -13,10 +12,8 @@ export class RelationsService {
     private readonly relationsModel: Model<RelationsDocument>,
   ) {}
 
-  async create(
-    createCatDto: CreateRelationDto | CreateRelationDto[],
-  ): Promise<Relation> {
-    const createdRelation = await this.relationsModel.create(createCatDto);
+  async create(relations): Promise<Relation> {
+    const createdRelation = await this.relationsModel.create(relations);
     return createdRelation;
   }
 

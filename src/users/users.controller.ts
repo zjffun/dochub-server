@@ -7,13 +7,13 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('user')
+  @UseGuards(JwtAuthGuard)
   async getUser(@Request() req) {
     const { pick } = await import('lodash-es');
     const jwtUser = req.user as IJwtUser;
-    const userInfo = await this.usersService.findById(jwtUser.userId);
-    const result = pick(userInfo, ['name', 'role', 'avatarUrl', 'email']);
+    const user = await this.usersService.findById(jwtUser.userId);
+    const result = pick(user, ['login', 'name', 'role', 'avatarUrl', 'email']);
     return result;
   }
 }
