@@ -1,7 +1,6 @@
 export class CreateCollectionDto {
-  readonly nameId: string;
+  readonly path: string;
   readonly name: string;
-  readonly groupName: string;
   readonly lang: string;
   readonly desc: string;
 }

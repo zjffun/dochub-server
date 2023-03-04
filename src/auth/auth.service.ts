@@ -20,13 +20,23 @@ export class AuthService {
     return null;
   }
 
-  async findOrCreateGithubUser(user: User) {
+  async findOrCreateGithubUser({ user, login }: { user: User; login: string }) {
+    const { nanoid } = await import('nanoid');
+
     const currentUser = await this.usersService.findOne({
       githubId: user.githubId,
     });
 
     if (currentUser) {
       return currentUser;
+    }
+
+    const loginUser = await this.usersService.findOne({ login });
+
+    if (loginUser) {
+      user.login = `${login}-${nanoid()}`;
+    } else {
+      user.login = login;
     }
 
     return this.usersService.create(user);

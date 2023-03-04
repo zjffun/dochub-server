@@ -1,24 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export type CollectionsDocument = HydratedDocument<Collection>;
+export type DocDocument = HydratedDocument<Doc>;
 
 @Schema({})
-export class Collection {
+export class Doc {
   @Prop()
-  nameId: string;
+  path: string;
+
+  @Prop()
+  depth: number;
 
   @Prop()
   name: string;
-
-  @Prop()
-  groupName: string;
 
   @Prop()
   lang: string;
 
   @Prop()
   desc: string;
+
+  @Prop()
+  groupName: string;
 
   @Prop()
   originalLineNum: number;
@@ -30,4 +33,4 @@ export class Collection {
   consistentLineNum: number;
 }
 
-export const CollectionSchema = SchemaFactory.createForClass(Collection);
+export const DocSchema = SchemaFactory.createForClass(Doc);

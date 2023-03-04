@@ -26,10 +26,17 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
     githubUser.avatarUrl = profile._json.avatar_url;
     githubUser.email = profile._json.email;
 
-    const user = await this.authService.findOrCreateGithubUser(githubUser);
+    const login = profile._json.login;
+
+    const user = await this.authService.findOrCreateGithubUser({
+      user: githubUser,
+      login,
+    });
+
     if (!user) {
       throw new UnauthorizedException();
     }
+
     return user;
   }
 }

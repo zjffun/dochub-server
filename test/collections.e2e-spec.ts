@@ -2,9 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { CollectionsModule } from './../src/collections/collections.module';
+import { DocsModule } from '../src/docs/docs.module';
 
-describe('CollectionsController (e2e)', () => {
+describe('DocsController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -13,7 +13,7 @@ describe('CollectionsController (e2e)', () => {
         MongooseModule.forRoot(
           'mongodb://127.0.0.1:27017/relation?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.1',
         ),
-        CollectionsModule,
+        DocsModule,
       ],
     }).compile();
 
@@ -21,16 +21,16 @@ describe('CollectionsController (e2e)', () => {
     await app.init();
   });
 
-  it('/collections (Post)', () => {
+  it('/docs (Post)', () => {
     return request(app.getHttpServer())
-      .post('/collections')
+      .post('/docs')
       .send({ name: 'test', groupName: 'test', lang: 'zh-CN', desc: '' })
       .expect(201);
   });
 
-  it('/collections (GET)', () => {
+  it('/docs (GET)', () => {
     return request(app.getHttpServer())
-      .get('/collections')
+      .get('/docs')
       .expect(200)
       .expect((res) => {
         expect(res.body).toBeInstanceOf(Array);

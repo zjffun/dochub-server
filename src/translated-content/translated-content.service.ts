@@ -49,6 +49,18 @@ export class TranslatedContentService {
     return this.TranslatedContentModel.findOne({ _id: id }).exec();
   }
 
+  async findForViewer(condition: {
+    login: string;
+    nameId: string;
+    title: string;
+  }): Promise<TranslatedContent> {
+    return this.TranslatedContentModel.findOne({
+      login: condition.login,
+      nameId: condition.nameId,
+      title: condition.title,
+    }).exec();
+  }
+
   async delete(id: string) {
     const deletedTranslatedContent =
       await this.TranslatedContentModel.findByIdAndRemove({ _id: id }).exec();
