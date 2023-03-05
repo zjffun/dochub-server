@@ -8,9 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import * as path from 'path';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { dataPath } from 'src/config';
 import Rules from 'src/decorators/rules';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { TranslatedContentService } from 'src/translated-content/translated-content.service';

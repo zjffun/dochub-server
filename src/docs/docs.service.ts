@@ -67,7 +67,7 @@ export class DocsService {
   }
 
   async count(condition: IConditions) {
-    const pathRegExp = new RegExp(`^${condition.path}`);
+    const pathRegExp = new RegExp(`^${condition.path}[^$]`);
     const maxPathSize = condition.path.split('/').length - 1 + condition.depth;
 
     return this.DocsModel.find({
