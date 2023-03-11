@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { mongodbUri } from './config';
 import { DocsModule } from './docs/docs.module';
 import { RelationsModule } from './relations/relations.module';
-import { TranslatedContentModule } from './translated-content/translated-content.module';
+import { ContentsModule } from './contents/contents.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -16,7 +16,7 @@ import { UsersModule } from './users/users.module';
     RelationsModule,
     AuthModule,
     UsersModule,
-    TranslatedContentModule,
+    ContentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

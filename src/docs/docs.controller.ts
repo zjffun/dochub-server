@@ -1,21 +1,19 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
   Param,
-  Post,
   Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ContentsService } from 'src/contents/contents.service';
 import Rules from 'src/decorators/rules';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { RelationsService } from 'src/relations/relations.service';
 import { getPageInfo } from 'src/utils/page';
 import { DocsService } from './docs.service';
-import { CreateCollectionDto } from './dto/create-doc.dto';
 import { Doc } from './schemas/docs.schema';
 
 @Controller('api/docs')
@@ -23,6 +21,7 @@ export class DocsController {
   constructor(
     private readonly docsService: DocsService,
     private readonly relationsService: RelationsService,
+    private readonly contentsService: ContentsService,
   ) {}
 
   @Get()
@@ -57,13 +56,6 @@ export class DocsController {
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Doc> {
     return this.docsService.findOne(id);
-  }
-
-  @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Rules('admin')
-  async create(@Body() createRelationDto: CreateCollectionDto) {
-    await this.docsService.create(createRelationDto);
   }
 
   @Put('progress-info/:nameId')
