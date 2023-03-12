@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ContentsService } from 'src/contents/contents.service';
@@ -29,6 +37,7 @@ export class DocController {
 
     doc.createUserObjectId = new Types.ObjectId(req.user.userId);
     doc.path = createRelationDto.path;
+    doc.depth = createRelationDto.path.split('/').length - 1;
     doc.originalOwner = createRelationDto.originalOwner;
     doc.originalRepo = createRelationDto.originalRepo;
     doc.originalBranch = createRelationDto.originalBranch;
@@ -50,8 +59,14 @@ export class DocController {
     translatedContent.content = createRelationDto.translatedContent;
     await this.contentsService.createIfNotExist(translatedContent);
 
-    await this.docsService.create(createRelationDto);
+    await this.docsService.create(doc);
 
     return true;
+  }
+
+  @Get('viewer-data')
+  async getRelationViewerData(@Query('path') docPath: string) {
+    // TODO: implement
+    return false;
   }
 }

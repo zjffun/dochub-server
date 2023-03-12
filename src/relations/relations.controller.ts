@@ -77,12 +77,6 @@ export class RelationsController {
     return result;
   }
 
-  @Get('viewer-data')
-  async getRelationViewerData(@Query('path') docPath: string): Promise<any> {
-    // TODO: implement
-    return false;
-  }
-
   @Get()
   async findAll(): Promise<Relation[]> {
     return this.relationsService.findAll();

@@ -46,7 +46,7 @@ export class DocsService {
     return true;
   }
 
-  async create(collection): Promise<Doc> {
+  async create(collection: Doc): Promise<Doc> {
     const createdCollection = await this.DocsModel.create(collection);
     return createdCollection;
   }
