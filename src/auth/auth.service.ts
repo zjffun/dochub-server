@@ -28,6 +28,8 @@ export class AuthService {
     });
 
     if (currentUser) {
+      currentUser.githubToken = user.githubToken;
+      await currentUser.save();
       return currentUser;
     }
 
@@ -53,6 +55,7 @@ export class AuthService {
         userId: user._id.toString(),
         role: user.role,
       }),
+      github_token: user.githubToken,
     };
   }
 }

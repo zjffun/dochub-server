@@ -80,8 +80,10 @@ export class DocsService {
       .exec();
   }
 
-  async findOne(id: string): Promise<Doc> {
-    return this.DocsModel.findOne({ _id: id }).exec();
+  async findOne(condition) {
+    return this.DocsModel.findOne({
+      path: condition.path,
+    }).exec();
   }
 
   async delete(id: string) {

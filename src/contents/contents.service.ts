@@ -23,4 +23,10 @@ export class ContentsService {
 
     return doc;
   }
+
+  async findOne(condition) {
+    return this.ContentsModel.findOne({
+      sha: condition.sha,
+    }).exec();
+  }
 }

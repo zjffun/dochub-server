@@ -8,34 +8,22 @@ export type RelationsDocument = HydratedDocument<Relation>;
 })
 export class Relation {
   @Prop()
-  nameId: string;
-
-  @Prop()
-  fromPath: string;
-
-  @Prop()
-  toPath: string;
+  docPath: string;
 
   @Prop()
   fromRange: [number, number];
 
   @Prop()
+  fromContentSha: string;
+
+  @Prop()
   toRange: [number, number];
 
   @Prop()
+  toContentSha: string;
+
+  @Prop()
   state: string;
-
-  @Prop()
-  fromGitRev: string;
-
-  @Prop()
-  toGitRev: string;
-
-  @Prop()
-  fromGitWorkingDirectory: string;
-
-  @Prop()
-  toGitWorkingDirectory: string;
 }
 
 export const RelationSchema = SchemaFactory.createForClass(Relation);

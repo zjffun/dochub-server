@@ -70,6 +70,9 @@ export class Doc {
 
   @Prop()
   createUserObjectId: Types.ObjectId;
+
+  @Prop()
+  updateUserObjectId: Types.ObjectId;
 }
 
 export const DocSchema = SchemaFactory.createForClass(Doc);

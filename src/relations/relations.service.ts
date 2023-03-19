@@ -128,9 +128,7 @@ export class RelationsService {
   async find(condition) {
     const doc = await this.relationsModel
       .find({
-        fromPath: condition.fromPath,
-        toPath: condition.toPath,
-        nameId: condition.nameId,
+        docPath: condition.docPath,
       })
       .exec();
 
@@ -157,5 +155,10 @@ export class RelationsService {
       .deleteMany({ nameId: nameId })
       .exec();
     return deletedRelation;
+  }
+
+  async createMany(relations: Relation[]) {
+    const createdRelations = await this.relationsModel.insertMany(relations);
+    return createdRelations;
   }
 }
