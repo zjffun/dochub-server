@@ -21,12 +21,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/core": "^9.0.0",
+    "@nestjs/common": "^9.3.12",
+    "@nestjs/core": "^9.3.12",
     "@nestjs/jwt": "^10.0.1",
     "@nestjs/mongoose": "^9.2.1",
     "@nestjs/passport": "^9.0.1",
-    "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-express": "^9.3.12",
     "execa": "^7.0.0",
     "lodash-es": "^4.17.21",
     "mongoose": "^6.8.0",

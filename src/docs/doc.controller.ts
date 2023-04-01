@@ -46,9 +46,11 @@ export class DocController {
 
     const doc = new Doc();
 
-    const { originalContent, translatedContent } = createRelationDto;
+    const { originalContent, translatedContent, originalFromContent } =
+      createRelationDto;
     const originalContentSha = await gitHashObject(originalContent);
     const translatedContentSha = await gitHashObject(translatedContent);
+    const originalFromContentSha = await gitHashObject(originalFromContent);
 
     doc.createUserObjectId = new Types.ObjectId(req.user.userId);
     doc.path = createRelationDto.path;
@@ -76,23 +78,33 @@ export class DocController {
     translatedContentInstance.content = translatedContent;
     await this.contentsService.createIfNotExist(translatedContentInstance);
 
+    const originalFromContentInstance = new Content();
+    originalFromContentInstance.sha = originalFromContentSha;
+    originalFromContentInstance.content = originalFromContent;
+    await this.contentsService.createIfNotExist(originalFromContentInstance);
+
     await this.docsService.create(doc);
 
-    const ranges = await getRelationRanges(originalContent, translatedContent);
+    const ranges = await getRelationRanges(
+      originalFromContent,
+      translatedContent,
+    );
 
     const relations = ranges.map((range) => {
       const relation = new Relation();
       relation.docPath = createRelationDto.path;
       relation.fromRange = range.fromRange;
       relation.toRange = range.toRange;
-      relation.fromContentSha = originalContentSha;
+      relation.fromContentSha = originalFromContentSha;
       relation.toContentSha = translatedContentSha;
       return relation;
     });
 
     await this.relationService.createMany(relations);
 
-    return true;
+    return {
+      path: doc.path,
+    };
   }
 
   @Put()

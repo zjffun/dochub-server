@@ -14,6 +14,7 @@ export class CreateCollectionDto {
   readonly originalPath?: string;
   readonly originalRev?: string;
   readonly originalContent?: string;
+  readonly originalFromContent?: string;
   readonly translatedOwner?: string;
   readonly translatedRepo?: string;
   readonly translatedBranch?: string;
