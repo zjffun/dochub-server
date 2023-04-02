@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Put,
   Query,
@@ -15,9 +17,10 @@ import { ContentsService } from 'src/contents/contents.service';
 import { Content } from 'src/contents/schemas/contents.schema';
 import { RelationsService } from 'src/relations/relations.service';
 import { Relation } from 'src/relations/schemas/relations.schema';
+import { UsersService } from 'src/users/users.service';
 import { gitHashObject } from 'src/utils/gitHashObject';
 import { DocsService } from './docs.service';
-import { CreateCollectionDto } from './dto/create-doc.dto';
+import { CreateDocDto } from './dto/create-doc.dto';
 import { Doc } from './schemas/docs.schema';
 
 interface IViewerContents {
@@ -37,35 +40,60 @@ export class DocController {
     private readonly docsService: DocsService,
     private readonly contentsService: ContentsService,
     private readonly relationService: RelationsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Req() req, @Body() createRelationDto: CreateCollectionDto) {
+  async create(@Req() req, @Body() createDocDto: CreateDocDto) {
+    const {
+      originalContent,
+      translatedContent,
+      originalFromContent,
+      path: docPath,
+    } = createDocDto;
+
+    const userObjectId = new Types.ObjectId(req.user.userId);
+
+    await this.validatePathPermission({
+      path: docPath,
+      userObjectId,
+    });
+
+    // check if doc exists
+    const docCheckResult = await this.docsService.findOne({
+      path: docPath,
+    });
+
+    if (docCheckResult) {
+      throw new HttpException(
+        `Doc path ${docPath} already exists.`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const { getRelationRanges } = await import('relation2-core');
 
     const doc = new Doc();
 
-    const { originalContent, translatedContent, originalFromContent } =
-      createRelationDto;
     const originalContentSha = await gitHashObject(originalContent);
     const translatedContentSha = await gitHashObject(translatedContent);
     const originalFromContentSha = await gitHashObject(originalFromContent);
 
-    doc.createUserObjectId = new Types.ObjectId(req.user.userId);
-    doc.path = createRelationDto.path;
-    doc.depth = createRelationDto.path.split('/').length - 1;
-    doc.originalOwner = createRelationDto.originalOwner;
-    doc.originalRepo = createRelationDto.originalRepo;
-    doc.originalBranch = createRelationDto.originalBranch;
-    doc.originalPath = createRelationDto.originalPath;
-    doc.originalRev = createRelationDto.originalRev;
+    doc.createUserObjectId = userObjectId;
+    doc.path = docPath;
+    doc.depth = createDocDto.path.split('/').length - 1;
+    doc.originalOwner = createDocDto.originalOwner;
+    doc.originalRepo = createDocDto.originalRepo;
+    doc.originalBranch = createDocDto.originalBranch;
+    doc.originalPath = createDocDto.originalPath;
+    doc.originalRev = createDocDto.originalRev;
     doc.originalContentSha = originalContentSha;
-    doc.translatedOwner = createRelationDto.translatedOwner;
-    doc.translatedRepo = createRelationDto.translatedRepo;
-    doc.translatedBranch = createRelationDto.translatedBranch;
-    doc.translatedPath = createRelationDto.translatedPath;
-    doc.translatedRev = createRelationDto.translatedRev;
+    doc.translatedOwner = createDocDto.translatedOwner;
+    doc.translatedRepo = createDocDto.translatedRepo;
+    doc.translatedBranch = createDocDto.translatedBranch;
+    doc.translatedPath = createDocDto.translatedPath;
+    doc.translatedRev = createDocDto.translatedRev;
     doc.translatedContentSha = translatedContentSha;
 
     const originalContentInstance = new Content();
@@ -92,7 +120,7 @@ export class DocController {
 
     const relations = ranges.map((range) => {
       const relation = new Relation();
-      relation.docPath = createRelationDto.path;
+      relation.docPath = docPath;
       relation.fromRange = range.fromRange;
       relation.toRange = range.toRange;
       relation.fromContentSha = originalFromContentSha;
@@ -109,7 +137,7 @@ export class DocController {
 
   @Put()
   @UseGuards(JwtAuthGuard)
-  async update(@Req() req, @Body() relationDto: CreateCollectionDto) {
+  async update(@Req() req, @Body() relationDto: CreateDocDto) {
     const doc = await this.docsService.findOne({
       path: relationDto.path,
     });
@@ -201,5 +229,29 @@ export class DocController {
       viewerRelations,
       viewerContents,
     };
+  }
+
+  async validatePathPermission({
+    path,
+    userObjectId,
+  }: {
+    path: string;
+    userObjectId: Types.ObjectId;
+  }) {
+    const user = await this.usersService.findById(userObjectId);
+    const { login, pathPermissions } = user;
+
+    if (path.startsWith(`/${login}/`)) {
+      return true;
+    }
+
+    if (pathPermissions?.some((p) => path.startsWith(p))) {
+      return true;
+    }
+
+    throw new HttpException(
+      `${login} doesn't have permissions for ${path}.`,
+      HttpStatus.FORBIDDEN,
+    );
   }
 }

@@ -1,4 +1,4 @@
-export class CreateCollectionDto {
+export class CreateDocDto {
   readonly path: string;
   readonly name?: string;
   readonly desc?: string;
