@@ -137,21 +137,30 @@ export class DocController {
 
   @Put()
   @UseGuards(JwtAuthGuard)
-  async update(@Req() req, @Body() relationDto: CreateDocDto) {
+  async update(@Req() req, @Body() docDto: CreateDocDto) {
+    const { path: docPath } = docDto;
+
+    const userObjectId = new Types.ObjectId(req.user.userId);
+
+    await this.validatePathPermission({
+      path: docPath,
+      userObjectId,
+    });
+
     const doc = await this.docsService.findOne({
-      path: relationDto.path,
+      path: docDto.path,
     });
 
     doc.updateUserObjectId = new Types.ObjectId(req.user.userId);
 
-    if (relationDto.translatedContent !== undefined) {
+    if (docDto.translatedContent !== undefined) {
       const translatedContentSha = await gitHashObject(
-        relationDto.translatedContent,
+        docDto.translatedContent,
       );
 
       const translatedContentInstance = new Content();
       translatedContentInstance.sha = translatedContentSha;
-      translatedContentInstance.content = relationDto.translatedContent;
+      translatedContentInstance.content = docDto.translatedContent;
       await this.contentsService.createIfNotExist(translatedContentInstance);
 
       doc.translatedContentSha = translatedContentSha;
@@ -164,7 +173,15 @@ export class DocController {
 
   @Delete()
   @UseGuards(JwtAuthGuard)
-  async delete() {
+  async delete(@Req() req, @Body() docDto: CreateDocDto) {
+    const { path: docPath } = docDto;
+    const userObjectId = new Types.ObjectId(req.user.userId);
+
+    await this.validatePathPermission({
+      path: docPath,
+      userObjectId,
+    });
+
     // TODO: implement
   }
 
