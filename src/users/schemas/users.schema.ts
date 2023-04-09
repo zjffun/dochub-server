@@ -27,6 +27,13 @@ export class User {
 
   @Prop()
   githubId: string;
+
+  @Prop()
+  pathPermissions: string[];
+
+  // TODO: fix vulnerable
+  @Prop()
+  githubToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

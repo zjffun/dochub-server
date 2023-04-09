@@ -30,7 +30,9 @@ export class AuthController {
   @Get('github/callback')
   @Header('CONTENT-TYPE', 'text/html')
   async githubCallback(@Request() req) {
-    const { access_token } = await this.authService.login(req.user);
+    const { access_token, github_token } = await this.authService.login(
+      req.user,
+    );
 
     return `
       <!DOCTYPE html>
@@ -41,6 +43,8 @@ export class AuthController {
         <body>
           <script>
             localStorage.setItem('access_token', '${access_token}');
+            // TODO: fix vulnerable
+            localStorage.setItem('github_token', '${github_token}');
             window.opener.postMessage({ type: 'signInSuccess' });
             window.close();
           </script>

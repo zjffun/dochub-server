@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 export class GithubStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super({
+      scope: ['public_repo'],
       clientID: githubClientID,
       clientSecret: githubClientSecret,
       callbackURL: githubCallbackURL,
@@ -25,11 +26,19 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
     githubUser.name = profile._json.name;
     githubUser.avatarUrl = profile._json.avatar_url;
     githubUser.email = profile._json.email;
+    githubUser.githubToken = accessToken;
 
-    const user = await this.authService.findOrCreateGithubUser(githubUser);
+    const login = profile._json.login;
+
+    const user = await this.authService.findOrCreateGithubUser({
+      user: githubUser,
+      login,
+    });
+
     if (!user) {
       throw new UnauthorizedException();
     }
+
     return user;
   }
 }
