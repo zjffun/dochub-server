@@ -5295,10 +5295,10 @@ regexpp@^3.2.0:
   resolved "https://registry.npmmirror.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
 
-relation2-core@^0.0.23:
-  version "0.0.23"
-  resolved "https://registry.npmmirror.com/relation2-core/-/relation2-core-0.0.23.tgz#813366a556622eabf432a04d4c39fd9d5fa463fe"
-  integrity sha512-QIWfstKyA2eUkvXgRbZe4POXhuJR+hbXveLxdFwO2HNDMc3XlUqnJ2xC3mCx///ncUa2EggMLU1kWXx6sidHjA==
+relation2-core@^0.0.25:
+  version "0.0.25"
+  resolved "https://registry.npmmirror.com/relation2-core/-/relation2-core-0.0.25.tgz#cd2144071e134a9aef709287f122cf9be3cb58bf"
+  integrity sha512-CniTLm4C//dCfLA3Qj04jIMh/etid5GsrlDew7nfBv3DfymFndCQFYpz0uYB/4ZOC7uaMFCPiqfNOrOo4nB1Ew==
   dependencies:
     diff "^5.0.0"
     fs-extra "^10.1.0"
