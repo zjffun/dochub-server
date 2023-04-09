@@ -173,8 +173,7 @@ export class DocController {
 
   @Delete()
   @UseGuards(JwtAuthGuard)
-  async delete(@Req() req, @Body() docDto: CreateDocDto) {
-    const { path: docPath } = docDto;
+  async delete(@Req() req, @Query('path') docPath: string) {
     const userObjectId = new Types.ObjectId(req.user.userId);
 
     await this.validatePathPermission({
@@ -182,7 +181,14 @@ export class DocController {
       userObjectId,
     });
 
-    // TODO: implement
+    const deleteDoc = await this.docsService.findOne({
+      path: docPath,
+    });
+
+    // TODO: fake delete
+    deleteDoc.deleteOne();
+
+    return true;
   }
 
   @Get('viewer-data')
