@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type RelationsDocument = HydratedDocument<Relation>;
 
@@ -8,7 +8,7 @@ export type RelationsDocument = HydratedDocument<Relation>;
 })
 export class Relation {
   @Prop()
-  docPath: string;
+  docObjectId: Types.ObjectId;
 
   @Prop()
   fromRange: [number, number];

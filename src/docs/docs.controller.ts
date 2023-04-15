@@ -5,44 +5,64 @@ import {
   Param,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { ContentsService } from 'src/contents/contents.service';
+import { JwtStrategy } from 'src/auth/jwt.strategy';
 import Rules from 'src/decorators/rules';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { RelationsService } from 'src/relations/relations.service';
+import { UsersService } from 'src/users/users.service';
 import { getPageInfo } from 'src/utils/page';
 import { DocsService } from './docs.service';
-import { Doc } from './schemas/docs.schema';
+import validatePathPermission from './utils/validatePathPermission';
 
 @Controller('api/docs')
 export class DocsController {
   constructor(
     private readonly docsService: DocsService,
     private readonly relationsService: RelationsService,
-    private readonly contentsService: ContentsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Get()
   async findAll(
+    @Req() req,
     @Query('page') page: string,
     @Query('pageSize') pageSize: string,
     @Query('path') path: string,
     @Query('depth') depthQuery: string,
+    @Query('isDelete') isDeleteQuery: string,
   ) {
     const pageInfo = getPageInfo(page, pageSize);
     const depth = Number(depthQuery);
+    const isDelete = isDeleteQuery === 'true';
+
+    if (isDelete) {
+      const jwtStrategy = new JwtStrategy();
+      const user = await jwtStrategy.getUser(req);
+      const userObjectId = new Types.ObjectId(user.userId);
+
+      await validatePathPermission({
+        usersService: this.usersService,
+        path: path,
+        userObjectId,
+      });
+    }
 
     const list = await this.docsService.findAll({
       ...pageInfo,
       path,
       depth,
+      isDelete,
     });
 
     const total = await this.docsService.count({
       path,
       depth,
+      isDelete,
     });
 
     const result = {
@@ -51,11 +71,6 @@ export class DocsController {
     };
 
     return result;
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Doc> {
-    return this.docsService.findOne(id);
   }
 
   @Put('progress-info/:nameId')

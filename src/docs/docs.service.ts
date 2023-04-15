@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { RelationsService } from 'src/relations/relations.service';
-import { IPageInfo } from 'src/types';
+import { UsersService } from 'src/users/users.service';
 import { Doc, DocDocument } from './schemas/docs.schema';
-
-export type IConditions = {
-  depth?: number;
-} & Partial<IPageInfo> &
-  Partial<Doc>;
+import getCondition, { IRawCondition } from './utils/getCondition';
 
 @Injectable()
 export class DocsService {
@@ -16,6 +12,7 @@ export class DocsService {
     @InjectModel(Doc.name)
     private readonly DocsModel: Model<DocDocument>,
     private readonly relationsService: RelationsService,
+    private readonly usersService: UsersService,
   ) {}
 
   async setProgressInfo(nameId: string) {
@@ -46,41 +43,43 @@ export class DocsService {
     return true;
   }
 
-  async create(collection: Doc): Promise<Doc> {
+  async create(collection: Doc) {
     const createdCollection = await this.DocsModel.create(collection);
     return createdCollection;
   }
 
-  async findAll(condition: IConditions) {
-    const pathRegExp = new RegExp(`^${condition.path}[^$]`);
-    const maxPathSize = condition.path.split('/').length - 1 + condition.depth;
+  async findAll({
+    path,
+    depth,
+    skip,
+    limit,
+    isDelete,
+  }: {
+    skip?: number;
+    limit?: number;
+  } & IRawCondition) {
+    const condition = getCondition({ path, depth, isDelete });
 
-    return this.DocsModel.find({
-      path: pathRegExp,
-      depth: {
-        $lt: maxPathSize,
-      },
-    })
-      .skip(condition.skip)
-      .limit(condition.limit)
-      .exec();
+    let query = this.DocsModel.find(condition);
+
+    if (skip !== undefined) {
+      query = query.skip(skip);
+    }
+
+    if (limit !== undefined) {
+      query = query.limit(limit);
+    }
+
+    return query.exec();
   }
 
-  async count(condition: IConditions) {
-    const pathRegExp = new RegExp(`^${condition.path}[^$]`);
-    const maxPathSize = condition.path.split('/').length - 1 + condition.depth;
+  async count({ path, depth, isDelete }: IRawCondition) {
+    const condition = getCondition({ path, depth, isDelete });
 
-    return this.DocsModel.find({
-      path: pathRegExp,
-      depth: {
-        $lt: maxPathSize,
-      },
-    })
-      .count()
-      .exec();
+    return this.DocsModel.find(condition).count().exec();
   }
 
-  async findOne(condition) {
+  async findOne(condition: Partial<Doc>) {
     return this.DocsModel.findOne({
       path: condition.path,
     }).exec();

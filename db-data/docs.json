@@ -20,62 +20,6 @@
     "groupName": "rollup.js"
   },
   {
-    "path": "/rollup-js-zh-cn/docs/.vitepress/config.ts",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/command-line-interface/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/configuration-options/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/es-module-syntax/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/faqs/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/index.md",
-    "depth": 3
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/introduction/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/javascript-api/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/migration/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/plugin-development/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/public/manifest.json",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/tools/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/troubleshooting/index.md",
-    "depth": 4
-  },
-  {
-    "path": "/rollup-js-zh-cn/docs/tutorial/index.md",
-    "depth": 4
-  },
-  {
     "path": "/jsdom-zh-cn",
     "depth": 1,
     "name": "jsdom 中文文档",

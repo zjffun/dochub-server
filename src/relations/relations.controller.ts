@@ -93,6 +93,7 @@ export class RelationsController {
   async create(
     @Body() createRelationDto: CreateRelationDto | CreateRelationDto[],
   ) {
+    // TODO: create Relation obj
     await this.relationsService.create(createRelationDto);
   }
 

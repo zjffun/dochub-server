@@ -73,6 +73,15 @@ export class Doc {
 
   @Prop()
   updateUserObjectId: Types.ObjectId;
+
+  @Prop()
+  isDelete: boolean;
+
+  @Prop()
+  deleteUserObjectId: Types.ObjectId;
+
+  @Prop()
+  deleteDate: Date;
 }
 
 export const DocSchema = SchemaFactory.createForClass(Doc);

@@ -1,5 +1,5 @@
 export class CreateRelationDto {
-  readonly docPath: string;
+  readonly docObjectId: string;
   readonly fromRange: [number, number];
   readonly fromContentSha: string;
   readonly toRange: [number, number];

@@ -128,7 +128,7 @@ export class RelationsService {
   async find(condition) {
     const doc = await this.relationsModel
       .find({
-        docPath: condition.docPath,
+        docObjectId: condition.docObjectId,
       })
       .exec();
 

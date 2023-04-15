@@ -22,6 +22,7 @@ import { gitHashObject } from 'src/utils/gitHashObject';
 import { DocsService } from './docs.service';
 import { CreateDocDto } from './dto/create-doc.dto';
 import { Doc } from './schemas/docs.schema';
+import validatePathPermission from './utils/validatePathPermission';
 
 interface IViewerContents {
   [key: string]: string;
@@ -55,7 +56,8 @@ export class DocController {
 
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    await this.validatePathPermission({
+    await validatePathPermission({
+      usersService: this.usersService,
       path: docPath,
       userObjectId,
     });
@@ -111,7 +113,7 @@ export class DocController {
     originalFromContentInstance.content = originalFromContent;
     await this.contentsService.createIfNotExist(originalFromContentInstance);
 
-    await this.docsService.create(doc);
+    const createdDoc = await this.docsService.create(doc);
 
     const ranges = await getRelationRanges(
       originalFromContent,
@@ -120,7 +122,7 @@ export class DocController {
 
     const relations = ranges.map((range) => {
       const relation = new Relation();
-      relation.docPath = docPath;
+      relation.docObjectId = createdDoc._id;
       relation.fromRange = range.fromRange;
       relation.toRange = range.toRange;
       relation.fromContentSha = originalFromContentSha;
@@ -142,7 +144,8 @@ export class DocController {
 
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    await this.validatePathPermission({
+    await validatePathPermission({
+      usersService: this.usersService,
       path: docPath,
       userObjectId,
     });
@@ -166,17 +169,22 @@ export class DocController {
       doc.translatedContentSha = translatedContentSha;
     }
 
-    doc.save();
+    await doc.save();
 
     return doc;
   }
 
   @Delete()
   @UseGuards(JwtAuthGuard)
-  async delete(@Req() req, @Query('path') docPath: string) {
+  async delete(
+    @Req() req,
+    @Query('path') docPath: string,
+    @Query('permanently') permanently: string,
+  ) {
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    await this.validatePathPermission({
+    await validatePathPermission({
+      usersService: this.usersService,
       path: docPath,
       userObjectId,
     });
@@ -185,8 +193,16 @@ export class DocController {
       path: docPath,
     });
 
-    // TODO: fake delete
-    deleteDoc.deleteOne();
+    if (permanently === 'true') {
+      await deleteDoc.deleteOne();
+      return true;
+    }
+
+    deleteDoc.isDelete = true;
+    deleteDoc.deleteUserObjectId = userObjectId;
+    deleteDoc.deleteDate = new Date();
+
+    await deleteDoc.save();
 
     return true;
   }
@@ -206,7 +222,7 @@ export class DocController {
     });
 
     const relations = await this.relationService.find({
-      docPath,
+      docObjectId: doc._id,
     });
 
     const viewerRelations: IViewerRelation[] = [];
@@ -252,29 +268,5 @@ export class DocController {
       viewerRelations,
       viewerContents,
     };
-  }
-
-  async validatePathPermission({
-    path,
-    userObjectId,
-  }: {
-    path: string;
-    userObjectId: Types.ObjectId;
-  }) {
-    const user = await this.usersService.findById(userObjectId);
-    const { login, pathPermissions } = user;
-
-    if (path.startsWith(`/${login}/`)) {
-      return true;
-    }
-
-    if (pathPermissions?.some((p) => path.startsWith(p))) {
-      return true;
-    }
-
-    throw new HttpException(
-      `${login} doesn't have permissions for ${path}.`,
-      HttpStatus.FORBIDDEN,
-    );
   }
 }
