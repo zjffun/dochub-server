@@ -257,10 +257,13 @@ export class DocController {
     }
 
     return {
+      docObjectId: doc._id.toString(),
       fromPath: doc.originalPath,
       toPath: doc.translatedPath,
       fromModifiedContent: originalContent.content,
+      fromModifiedContentSha: originalContent.sha,
       toModifiedContent: translatedContent.content,
+      toModifiedContentSha: translatedContent.sha,
       translatedOwner: doc.translatedOwner,
       translatedRepo: doc.translatedRepo,
       translatedBranch: doc.translatedBranch,

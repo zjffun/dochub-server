@@ -1,17 +1,18 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import Rules from 'src/decorators/rules';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { ContentsService } from 'src/contents/contents.service';
+import { DocsService } from 'src/docs/docs.service';
+import validatePathPermission from 'src/docs/utils/validatePathPermission';
+import { UsersService } from 'src/users/users.service';
 import { getPageInfo } from 'src/utils/page';
 import { CreateRelationDto } from './dto/create-relation.dto';
 import { RelationsService } from './relations.service';
@@ -21,7 +22,8 @@ import { Relation } from './schemas/relations.schema';
 export class RelationsController {
   constructor(
     private readonly relationsService: RelationsService,
-    private readonly contentsService: ContentsService,
+    private readonly usersService: UsersService,
+    private readonly docsService: DocsService,
   ) {}
 
   @Get('path-list')
@@ -88,19 +90,38 @@ export class RelationsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Rules('admin')
+  @UseGuards(JwtAuthGuard)
   async create(
-    @Body() createRelationDto: CreateRelationDto | CreateRelationDto[],
+    @Req() req,
+    @Body() batchCreateRelationDto: CreateRelationDto[],
   ) {
-    // TODO: create Relation obj
-    await this.relationsService.create(createRelationDto);
-  }
+    const relations = [];
 
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Rules('admin')
-  async delete(@Param('id') id: string) {
-    return this.relationsService.delete(id);
+    const userObjectId = new Types.ObjectId(req.user.userId);
+
+    for (const createRelationDto of batchCreateRelationDto) {
+      const docObjectId = new Types.ObjectId(createRelationDto.docObjectId);
+      const doc = await this.docsService.findOne({
+        _id: docObjectId,
+      });
+
+      validatePathPermission({
+        usersService: this.usersService,
+        path: doc.path,
+        userObjectId,
+      });
+
+      const relation = new Relation();
+      relation.docObjectId = doc._id;
+      relation.fromRange = createRelationDto.fromRange;
+      relation.toRange = createRelationDto.toRange;
+      relation.fromContentSha = createRelationDto.fromContentSha;
+      relation.toContentSha = createRelationDto.toContentSha;
+      relations.push(relation);
+    }
+
+    await this.relationsService.create(relations);
+
+    return true;
   }
 }

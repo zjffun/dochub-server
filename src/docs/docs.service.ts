@@ -79,10 +79,18 @@ export class DocsService {
     return this.DocsModel.find(condition).count().exec();
   }
 
-  async findOne(condition: Partial<Doc>) {
-    return this.DocsModel.findOne({
-      path: condition.path,
-    }).exec();
+  async findOne(condition: { _id?: Types.ObjectId; path?: string }) {
+    const filter = {};
+
+    if (condition._id !== undefined) {
+      filter['_id'] = condition._id;
+    }
+
+    if (condition.path !== undefined) {
+      filter['path'] = condition.path;
+    }
+
+    return this.DocsModel.findOne(filter).exec();
   }
 
   async delete(id: string) {
