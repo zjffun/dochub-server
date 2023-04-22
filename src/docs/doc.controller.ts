@@ -31,8 +31,6 @@ interface IViewerRelation {
   id: string;
   fromRange: [number, number];
   toRange: [number, number];
-  originalFromViewerContentRev: string;
-  originalToViewerContentRev: string;
 }
 
 @Controller('api/doc')
@@ -213,11 +211,11 @@ export class DocController {
       path: docPath,
     });
 
-    const originalContent = await this.contentsService.findOne({
+    const fromModified = await this.contentsService.findOne({
       sha: doc.originalContentSha,
     });
 
-    const translatedContent = await this.contentsService.findOne({
+    const toModified = await this.contentsService.findOne({
       sha: doc.translatedContentSha,
     });
 
@@ -229,30 +227,19 @@ export class DocController {
 
     const viewerContents: IViewerContents = {};
 
-    // TODO: optimize
+    // TODO: update to use fromOriginalContentSha and toOriginalContentSha
+    const fromOriginal = await this.contentsService.findOne({
+      sha: relations[0].fromContentSha,
+    });
+    const toOriginal = await this.contentsService.findOne({
+      sha: relations[0].toContentSha,
+    });
+
     for (const relation of relations) {
-      if (!viewerContents[relation.fromContentSha]) {
-        viewerContents[relation.fromContentSha] = (
-          await this.contentsService.findOne({
-            sha: relation.fromContentSha,
-          })
-        ).content;
-      }
-
-      if (!viewerContents[relation.toContentSha]) {
-        viewerContents[relation.toContentSha] = (
-          await this.contentsService.findOne({
-            sha: relation.toContentSha,
-          })
-        ).content;
-      }
-
       viewerRelations.push({
         id: relation._id.toString(),
         fromRange: relation.fromRange,
         toRange: relation.toRange,
-        originalFromViewerContentRev: relation.fromContentSha,
-        originalToViewerContentRev: relation.toContentSha,
       });
     }
 
@@ -260,15 +247,19 @@ export class DocController {
       docObjectId: doc._id.toString(),
       fromPath: doc.originalPath,
       toPath: doc.translatedPath,
-      fromModifiedContent: originalContent.content,
-      fromModifiedContentSha: originalContent.sha,
-      toModifiedContent: translatedContent.content,
-      toModifiedContentSha: translatedContent.sha,
+      fromOriginalContent: fromOriginal.content,
+      fromOriginalContentSha: fromOriginal.sha,
+      fromModifiedContent: fromModified.content,
+      fromModifiedContentSha: fromModified.sha,
+      toOriginalContent: toOriginal.content,
+      toOriginalContentSha: toOriginal.sha,
+      toModifiedContent: toModified.content,
+      toModifiedContentSha: toModified.sha,
       translatedOwner: doc.translatedOwner,
       translatedRepo: doc.translatedRepo,
       translatedBranch: doc.translatedBranch,
       translatedRev: doc.translatedRev,
-      viewerRelations,
+      relations: viewerRelations,
       viewerContents,
     };
   }
