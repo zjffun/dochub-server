@@ -19,6 +19,7 @@ import { RelationsService } from 'src/relations/relations.service';
 import { Relation } from 'src/relations/schemas/relations.schema';
 import { UsersService } from 'src/users/users.service';
 import { gitHashObject } from 'src/utils/gitHashObject';
+import getRelationRanges from 'src/utils/mdx/getRelationRanges';
 import { DocsService } from './docs.service';
 import { CreateDocDto } from './dto/create-doc.dto';
 import { Doc } from './schemas/docs.schema';
@@ -46,9 +47,9 @@ export class DocController {
   @UseGuards(JwtAuthGuard)
   async create(@Req() req, @Body() createDocDto: CreateDocDto) {
     const {
-      originalContent,
-      translatedContent,
-      originalFromContent,
+      fromOriginalContent,
+      fromModifiedContent,
+      toOriginalContent,
       path: docPath,
     } = createDocDto;
 
@@ -72,50 +73,52 @@ export class DocController {
       );
     }
 
-    const { getRelationRanges } = await import('relation2-core');
-
     const doc = new Doc();
 
-    const originalContentSha = await gitHashObject(originalContent);
-    const translatedContentSha = await gitHashObject(translatedContent);
-    const originalFromContentSha = await gitHashObject(originalFromContent);
+    const fromOriginalContentSha = await gitHashObject(fromOriginalContent);
+    const fromModifiedContentSha = await gitHashObject(fromModifiedContent);
+    const toOriginalContentSha = await gitHashObject(toOriginalContent);
 
     doc.createUserObjectId = userObjectId;
     doc.path = docPath;
     doc.depth = createDocDto.path.split('/').length - 1;
-    doc.originalOwner = createDocDto.originalOwner;
-    doc.originalRepo = createDocDto.originalRepo;
-    doc.originalBranch = createDocDto.originalBranch;
-    doc.originalPath = createDocDto.originalPath;
-    doc.originalRev = createDocDto.originalRev;
-    doc.originalContentSha = originalContentSha;
-    doc.translatedOwner = createDocDto.translatedOwner;
-    doc.translatedRepo = createDocDto.translatedRepo;
-    doc.translatedBranch = createDocDto.translatedBranch;
-    doc.translatedPath = createDocDto.translatedPath;
-    doc.translatedRev = createDocDto.translatedRev;
-    doc.translatedContentSha = translatedContentSha;
+    doc.fromOwner = createDocDto.fromOwner;
+    doc.fromRepo = createDocDto.fromRepo;
+    doc.fromBranch = createDocDto.fromBranch;
+    doc.fromPath = createDocDto.fromPath;
+    doc.fromOriginalRev = createDocDto.fromOriginalRev;
+    doc.fromModifiedRev = createDocDto.fromModifiedRev;
+    doc.fromOriginalContentSha = fromOriginalContentSha;
+    doc.fromModifiedContentSha = fromModifiedContentSha;
+    doc.toOwner = createDocDto.toOwner;
+    doc.toRepo = createDocDto.toRepo;
+    doc.toBranch = createDocDto.toBranch;
+    doc.toPath = createDocDto.toPath;
+    doc.toOriginalRev = createDocDto.toOriginalRev;
+    doc.toModifiedRev = createDocDto.toOriginalRev;
+    doc.toOriginalContentSha = toOriginalContentSha;
+    doc.toModifiedContentSha = toOriginalContentSha;
 
-    const originalContentInstance = new Content();
-    originalContentInstance.sha = originalContentSha;
-    originalContentInstance.content = originalContent;
-    await this.contentsService.createIfNotExist(originalContentInstance);
+    const fromOriginalContentInstance = new Content();
+    fromOriginalContentInstance.sha = fromOriginalContentSha;
+    fromOriginalContentInstance.content = fromOriginalContent;
+    await this.contentsService.createIfNotExist(fromOriginalContentInstance);
 
-    const translatedContentInstance = new Content();
-    translatedContentInstance.sha = translatedContentSha;
-    translatedContentInstance.content = translatedContent;
-    await this.contentsService.createIfNotExist(translatedContentInstance);
+    const fromModifiedContentInstance = new Content();
+    fromModifiedContentInstance.sha = fromModifiedContentSha;
+    fromModifiedContentInstance.content = fromModifiedContent;
+    await this.contentsService.createIfNotExist(fromModifiedContentInstance);
 
-    const originalFromContentInstance = new Content();
-    originalFromContentInstance.sha = originalFromContentSha;
-    originalFromContentInstance.content = originalFromContent;
-    await this.contentsService.createIfNotExist(originalFromContentInstance);
+    const toContentInstance = new Content();
+    toContentInstance.sha = toOriginalContentSha;
+    toContentInstance.content = toOriginalContent;
+    await this.contentsService.createIfNotExist(toContentInstance);
 
     const createdDoc = await this.docsService.create(doc);
 
     const ranges = await getRelationRanges(
-      originalFromContent,
-      translatedContent,
+      fromOriginalContent,
+      toOriginalContent,
     );
 
     const relations = ranges.map((range) => {
@@ -123,8 +126,6 @@ export class DocController {
       relation.docObjectId = createdDoc._id;
       relation.fromRange = range.fromRange;
       relation.toRange = range.toRange;
-      relation.fromContentSha = originalFromContentSha;
-      relation.toContentSha = translatedContentSha;
       return relation;
     });
 
@@ -154,17 +155,17 @@ export class DocController {
 
     doc.updateUserObjectId = new Types.ObjectId(req.user.userId);
 
-    if (docDto.translatedContent !== undefined) {
-      const translatedContentSha = await gitHashObject(
-        docDto.translatedContent,
+    if (docDto.toModifiedContent !== undefined) {
+      const toModifiedContentSha = await gitHashObject(
+        docDto.toModifiedContent,
       );
 
-      const translatedContentInstance = new Content();
-      translatedContentInstance.sha = translatedContentSha;
-      translatedContentInstance.content = docDto.translatedContent;
-      await this.contentsService.createIfNotExist(translatedContentInstance);
+      const toContentInstance = new Content();
+      toContentInstance.sha = toModifiedContentSha;
+      toContentInstance.content = docDto.toModifiedContent;
+      await this.contentsService.createIfNotExist(toContentInstance);
 
-      doc.translatedContentSha = translatedContentSha;
+      doc.toModifiedContentSha = toModifiedContentSha;
     }
 
     await doc.save();
@@ -211,12 +212,20 @@ export class DocController {
       path: docPath,
     });
 
-    const fromModified = await this.contentsService.findOne({
-      sha: doc.originalContentSha,
+    const fromOriginalContent = await this.contentsService.findOne({
+      sha: doc.fromOriginalContentSha,
     });
 
-    const toModified = await this.contentsService.findOne({
-      sha: doc.translatedContentSha,
+    const fromModifiedContent = await this.contentsService.findOne({
+      sha: doc.fromModifiedContentSha,
+    });
+
+    const toOriginalContent = await this.contentsService.findOne({
+      sha: doc.toOriginalContentSha,
+    });
+
+    const toModifiedContent = await this.contentsService.findOne({
+      sha: doc.toModifiedContentSha,
     });
 
     const relations = await this.relationService.find({
@@ -226,14 +235,6 @@ export class DocController {
     const viewerRelations: IViewerRelation[] = [];
 
     const viewerContents: IViewerContents = {};
-
-    // TODO: update to use fromOriginalContentSha and toOriginalContentSha
-    const fromOriginal = await this.contentsService.findOne({
-      sha: relations[0].fromContentSha,
-    });
-    const toOriginal = await this.contentsService.findOne({
-      sha: relations[0].toContentSha,
-    });
 
     for (const relation of relations) {
       viewerRelations.push({
@@ -245,20 +246,20 @@ export class DocController {
 
     return {
       docObjectId: doc._id.toString(),
-      fromPath: doc.originalPath,
-      toPath: doc.translatedPath,
-      fromOriginalContent: fromOriginal.content,
-      fromOriginalContentSha: fromOriginal.sha,
-      fromModifiedContent: fromModified.content,
-      fromModifiedContentSha: fromModified.sha,
-      toOriginalContent: toOriginal.content,
-      toOriginalContentSha: toOriginal.sha,
-      toModifiedContent: toModified.content,
-      toModifiedContentSha: toModified.sha,
-      translatedOwner: doc.translatedOwner,
-      translatedRepo: doc.translatedRepo,
-      translatedBranch: doc.translatedBranch,
-      translatedRev: doc.translatedRev,
+      fromPath: doc.fromPath,
+      toPath: doc.toPath,
+      fromOriginalContent: fromOriginalContent.content,
+      fromOriginalContentSha: fromOriginalContent.sha,
+      fromModifiedContent: fromModifiedContent.content,
+      fromModifiedContentSha: fromModifiedContent.sha,
+      toOriginalContent: toOriginalContent.content,
+      toOriginalContentSha: toOriginalContent.sha,
+      toModifiedContent: toModifiedContent.content,
+      toModifiedContentSha: toModifiedContent.sha,
+      toOwner: doc.toOwner,
+      toRepo: doc.toRepo,
+      toBranch: doc.toBranch,
+      toOriginalRev: doc.toOriginalRev,
       relations: viewerRelations,
       viewerContents,
     };

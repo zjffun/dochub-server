@@ -24,49 +24,61 @@ export class Doc {
   groupName: string;
 
   @Prop()
-  originalLineNum: number;
+  fromLineNum: number;
 
   @Prop()
-  translatedLineNum: number;
+  toLineNum: number;
 
   @Prop()
   consistentLineNum: number;
 
   @Prop()
-  originalOwner: string;
+  fromOwner: string;
 
   @Prop()
-  originalRepo: string;
+  fromRepo: string;
 
   @Prop()
-  originalBranch: string;
+  fromBranch: string;
 
   @Prop()
-  originalPath: string;
+  fromPath: string;
 
   @Prop()
-  originalRev: string;
+  fromOriginalRev: string;
 
   @Prop()
-  originalContentSha: string;
+  fromModifiedRev: string;
 
   @Prop()
-  translatedOwner: string;
+  fromOriginalContentSha: string;
 
   @Prop()
-  translatedRepo: string;
+  fromModifiedContentSha: string;
 
   @Prop()
-  translatedBranch: string;
+  toOwner: string;
 
   @Prop()
-  translatedPath: string;
+  toRepo: string;
 
   @Prop()
-  translatedRev: string;
+  toBranch: string;
 
   @Prop()
-  translatedContentSha: string;
+  toPath: string;
+
+  @Prop()
+  toOriginalRev: string;
+
+  @Prop()
+  toModifiedRev: string;
+
+  @Prop()
+  toOriginalContentSha: string;
+
+  @Prop()
+  toModifiedContentSha: string;
 
   @Prop()
   createUserObjectId: Types.ObjectId;

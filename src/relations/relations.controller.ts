@@ -47,11 +47,12 @@ export class RelationsController {
         toPath: item.toPath,
         nameId,
       };
-      const originalLineNum = await this.relationsService.getOriginalLineNum(
+      const originalLineNum = await this.relationsService.getFromLineNum(
         condition,
       );
-      const translatedLineNum =
-        await this.relationsService.getTranslatedLineNum(condition);
+      const translatedLineNum = await this.relationsService.getToLineNum(
+        condition,
+      );
       const consistentLineNum =
         await this.relationsService.getConsistentLineNum(condition);
 
