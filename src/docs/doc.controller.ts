@@ -98,6 +98,7 @@ export class DocController {
     doc.toModifiedRev = createDocDto.toOriginalRev;
     doc.toOriginalContentSha = toOriginalContentSha;
     doc.toModifiedContentSha = toOriginalContentSha;
+    doc.pullNumber = createDocDto.pullNumber;
 
     const fromOriginalContentInstance = new Content();
     fromOriginalContentInstance.sha = fromOriginalContentSha;
@@ -166,7 +167,25 @@ export class DocController {
       await this.contentsService.createIfNotExist(toContentInstance);
 
       doc.toModifiedContentSha = toModifiedContentSha;
+
+      if (!docDto.toModifiedRev) {
+        doc.toModifiedRev = '';
+      }
     }
+
+    if (docDto.pullNumber !== undefined) {
+      if (typeof docDto.pullNumber !== 'number') {
+        throw new HttpException('pullNumber must be a number', 400);
+      }
+
+      doc.pullNumber = docDto.pullNumber;
+    }
+
+    if (docDto.toModifiedRev !== undefined) {
+      doc.toModifiedRev = docDto.toModifiedRev;
+    }
+
+    // TODO: update translate
 
     await doc.save();
 
@@ -246,8 +265,7 @@ export class DocController {
 
     return {
       docObjectId: doc._id.toString(),
-      fromPath: doc.fromPath,
-      toPath: doc.toPath,
+
       fromOriginalContent: fromOriginalContent.content,
       fromOriginalContentSha: fromOriginalContent.sha,
       fromModifiedContent: fromModifiedContent.content,
@@ -256,12 +274,24 @@ export class DocController {
       toOriginalContentSha: toOriginalContent.sha,
       toModifiedContent: toModifiedContent.content,
       toModifiedContentSha: toModifiedContent.sha,
+
+      fromOwner: doc.fromOwner,
+      fromRepo: doc.fromRepo,
+      fromBranch: doc.fromBranch,
+      fromPath: doc.fromPath,
+
       toOwner: doc.toOwner,
       toRepo: doc.toRepo,
       toBranch: doc.toBranch,
+      toPath: doc.toPath,
+
+      fromOriginalRev: doc.fromOriginalRev,
+      fromModifiedRev: doc.fromModifiedRev,
       toOriginalRev: doc.toOriginalRev,
+      toModifiedRev: doc.toModifiedRev,
+      pullNumber: doc.pullNumber,
+
       relations: viewerRelations,
-      viewerContents,
     };
   }
 }

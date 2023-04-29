@@ -81,6 +81,9 @@ export class Doc {
   toModifiedContentSha: string;
 
   @Prop()
+  pullNumber: number;
+
+  @Prop()
   createUserObjectId: Types.ObjectId;
 
   @Prop()

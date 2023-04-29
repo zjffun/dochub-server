@@ -24,4 +24,5 @@ export class CreateDocDto {
   readonly toModifiedRev?: string;
   readonly toOriginalContent?: string;
   readonly toModifiedContent?: string;
+  readonly pullNumber?: number;
 }
