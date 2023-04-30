@@ -22,20 +22,16 @@ export class DocsService {
 
     const collection = await this.DocsModel.findOne(condition).exec();
 
-    const originalLineNum = await this.relationsService.getOriginalLineNum(
-      condition,
-    );
+    const fromLineNum = await this.relationsService.getFromLineNum(condition);
 
-    const translatedLineNum = await this.relationsService.getTranslatedLineNum(
-      condition,
-    );
+    const toLineNum = await this.relationsService.getToLineNum(condition);
 
     const consistentLineNum = await this.relationsService.getConsistentLineNum(
       condition,
     );
 
-    collection.originalLineNum = originalLineNum;
-    collection.translatedLineNum = translatedLineNum;
+    collection.fromLineNum = fromLineNum;
+    collection.toLineNum = toLineNum;
     collection.consistentLineNum = consistentLineNum;
 
     await collection.save();

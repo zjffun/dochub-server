@@ -52,7 +52,7 @@ export class AuthService {
   ) {
     return {
       access_token: this.jwtService.sign({
-        userId: user._id.toString(),
+        userId: user.id,
         role: user.role,
       }),
       github_token: user.githubToken,

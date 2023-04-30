@@ -14,13 +14,7 @@ export class Relation {
   fromRange: [number, number];
 
   @Prop()
-  fromContentSha: string;
-
-  @Prop()
   toRange: [number, number];
-
-  @Prop()
-  toContentSha: string;
 
   @Prop()
   state: string;

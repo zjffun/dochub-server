@@ -17,7 +17,7 @@ export class RelationsService {
     return createdRelation;
   }
 
-  async getOriginalLineNum(condition) {
+  async getFromLineNum(condition) {
     let num = 0;
 
     const results = await this.relationsModel
@@ -31,7 +31,7 @@ export class RelationsService {
     return num;
   }
 
-  async getTranslatedLineNum(condition) {
+  async getToLineNum(condition) {
     let num = 0;
 
     const results = await this.relationsModel
@@ -49,8 +49,6 @@ export class RelationsService {
   }
 
   async getConsistentLineNum(condition) {
-    const { Relation: RelationClass } = await import('relation2-core');
-
     const cwd = path.join(dataPath, condition.nameId);
 
     const results = await this.relationsModel
@@ -66,7 +64,7 @@ export class RelationsService {
           ...rawRelation.toObject(),
         };
 
-        const relation = new RelationClass(rawRelationWithCwd as any);
+        const relation = {} as any;
         const dirty = await relation.getFromDirty();
 
         if (!dirty) {
@@ -139,7 +137,7 @@ export class RelationsService {
     return this.relationsModel.find().exec();
   }
 
-  async findOne(id: string): Promise<Relation> {
+  async findOne(id: string) {
     return this.relationsModel.findOne({ _id: id }).exec();
   }
 
