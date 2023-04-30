@@ -11,7 +11,8 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
+import mongoose, { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ContentsService } from 'src/contents/contents.service';
 import { Content } from 'src/contents/schemas/contents.schema';
@@ -22,12 +23,10 @@ import { gitHashObject } from 'src/utils/gitHashObject';
 import getRelationRanges from 'src/utils/mdx/getRelationRanges';
 import { DocsService } from './docs.service';
 import { CreateDocDto } from './dto/create-doc.dto';
+import { UpdateDocDto } from './dto/update-doc.dto';
 import { Doc } from './schemas/docs.schema';
 import validatePathPermission from './utils/validatePathPermission';
 
-interface IViewerContents {
-  [key: string]: string;
-}
 interface IViewerRelation {
   id: string;
   fromRange: [number, number];
@@ -41,6 +40,7 @@ export class DocController {
     private readonly contentsService: ContentsService,
     private readonly relationService: RelationsService,
     private readonly usersService: UsersService,
+    @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
   @Post()
@@ -139,7 +139,7 @@ export class DocController {
 
   @Put()
   @UseGuards(JwtAuthGuard)
-  async update(@Req() req, @Body() docDto: CreateDocDto) {
+  async update(@Req() req, @Body() docDto: UpdateDocDto) {
     const { path: docPath } = docDto;
 
     const userObjectId = new Types.ObjectId(req.user.userId);
@@ -156,38 +156,64 @@ export class DocController {
 
     doc.updateUserObjectId = new Types.ObjectId(req.user.userId);
 
+    if (docDto.fromOriginalContent !== undefined) {
+      const contentDoc = await this.contentsService.createByContent(
+        docDto.fromOriginalContent,
+      );
+
+      doc.fromOriginalContentSha = contentDoc.sha;
+    }
+
+    if (docDto.fromModifiedContent !== undefined) {
+      const contentDoc = await this.contentsService.createByContent(
+        docDto.fromModifiedContent,
+      );
+
+      doc.fromModifiedContentSha = contentDoc.sha;
+    }
+
+    if (docDto.toOriginalContent !== undefined) {
+      const contentDoc = await this.contentsService.createByContent(
+        docDto.toOriginalContent,
+      );
+
+      doc.toOriginalContentSha = contentDoc.sha;
+    }
+
     if (docDto.toModifiedContent !== undefined) {
-      const toModifiedContentSha = await gitHashObject(
+      const contentDoc = await this.contentsService.createByContent(
         docDto.toModifiedContent,
       );
 
-      const toContentInstance = new Content();
-      toContentInstance.sha = toModifiedContentSha;
-      toContentInstance.content = docDto.toModifiedContent;
-      await this.contentsService.createIfNotExist(toContentInstance);
+      doc.toModifiedContentSha = contentDoc.sha;
+    }
 
-      doc.toModifiedContentSha = toModifiedContentSha;
+    UpdateDocDto.setUpdateData(doc, docDto);
 
-      if (!docDto.toModifiedRev) {
-        doc.toModifiedRev = '';
+    const session = await this.connection.startSession();
+
+    await session.withTransaction(async () => {
+      await doc.save({
+        session,
+      });
+
+      if (docDto.relations) {
+        for (const relation of docDto.relations) {
+          const relationDoc = await this.relationService.findOne(relation.id);
+
+          if (relationDoc.docObjectId.toString() === doc.id) {
+            relationDoc.fromRange = relation.fromRange;
+            relationDoc.toRange = relation.toRange;
+
+            await relationDoc.save({
+              session,
+            });
+          }
+        }
       }
-    }
+    });
 
-    if (docDto.pullNumber !== undefined) {
-      if (typeof docDto.pullNumber !== 'number') {
-        throw new HttpException('pullNumber must be a number', 400);
-      }
-
-      doc.pullNumber = docDto.pullNumber;
-    }
-
-    if (docDto.toModifiedRev !== undefined) {
-      doc.toModifiedRev = docDto.toModifiedRev;
-    }
-
-    // TODO: update translate
-
-    await doc.save();
+    session.endSession();
 
     return doc;
   }
@@ -253,18 +279,16 @@ export class DocController {
 
     const viewerRelations: IViewerRelation[] = [];
 
-    const viewerContents: IViewerContents = {};
-
     for (const relation of relations) {
       viewerRelations.push({
-        id: relation._id.toString(),
+        id: relation.id,
         fromRange: relation.fromRange,
         toRange: relation.toRange,
       });
     }
 
     return {
-      docObjectId: doc._id.toString(),
+      docObjectId: doc.id,
 
       fromOriginalContent: fromOriginalContent.content,
       fromOriginalContentSha: fromOriginalContent.sha,

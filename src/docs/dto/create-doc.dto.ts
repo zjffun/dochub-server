@@ -15,7 +15,9 @@ export class CreateDocDto {
   readonly fromOriginalRev?: string;
   readonly fromModifiedRev?: string;
   readonly fromOriginalContent?: string;
+  readonly fromOriginalContentSha?: string;
   readonly fromModifiedContent?: string;
+  readonly fromModifiedContentSha?: string;
   readonly toOwner?: string;
   readonly toRepo?: string;
   readonly toBranch?: string;
@@ -23,6 +25,8 @@ export class CreateDocDto {
   readonly toOriginalRev?: string;
   readonly toModifiedRev?: string;
   readonly toOriginalContent?: string;
+  readonly toOriginalContentSha?: string;
   readonly toModifiedContent?: string;
+  readonly toModifiedContentSha?: string;
   readonly pullNumber?: number;
 }

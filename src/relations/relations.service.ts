@@ -137,7 +137,7 @@ export class RelationsService {
     return this.relationsModel.find().exec();
   }
 
-  async findOne(id: string): Promise<Relation> {
+  async findOne(id: string) {
     return this.relationsModel.findOne({ _id: id }).exec();
   }
 

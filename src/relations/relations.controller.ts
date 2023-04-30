@@ -116,8 +116,6 @@ export class RelationsController {
       relation.docObjectId = doc._id;
       relation.fromRange = createRelationDto.fromRange;
       relation.toRange = createRelationDto.toRange;
-      relation.fromContentSha = createRelationDto.fromContentSha;
-      relation.toContentSha = createRelationDto.toContentSha;
       relations.push(relation);
     }
 
