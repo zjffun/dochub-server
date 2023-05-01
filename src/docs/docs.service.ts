@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { RelationsService } from 'src/relations/relations.service';
-import { UsersService } from 'src/users/users.service';
 import { Doc, DocDocument } from './schemas/docs.schema';
 import getCondition, { IRawCondition } from './utils/getCondition';
 
@@ -11,8 +9,6 @@ export class DocsService {
   constructor(
     @InjectModel(Doc.name)
     private readonly DocsModel: Model<DocDocument>,
-    private readonly relationsService: RelationsService,
-    private readonly usersService: UsersService,
   ) {}
 
   async setProgressInfo(nameId: string) {
@@ -22,17 +18,17 @@ export class DocsService {
 
     const collection = await this.DocsModel.findOne(condition).exec();
 
-    const fromLineNum = await this.relationsService.getFromLineNum(condition);
+    // const fromLineNum = await this.relationsService.getFromLineNum(condition);
 
-    const toLineNum = await this.relationsService.getToLineNum(condition);
+    // const toLineNum = await this.relationsService.getToLineNum(condition);
 
-    const consistentLineNum = await this.relationsService.getConsistentLineNum(
-      condition,
-    );
+    // const consistentLineNum = await this.relationsService.getConsistentLineNum(
+    //   condition,
+    // );
 
-    collection.fromLineNum = fromLineNum;
-    collection.toLineNum = toLineNum;
-    collection.consistentLineNum = consistentLineNum;
+    // collection.fromLineNum = fromLineNum;
+    // collection.toLineNum = toLineNum;
+    // collection.consistentLineNum = consistentLineNum;
 
     await collection.save();
 

@@ -34,8 +34,15 @@ Initiate:
 mongosh
 ```
 
-```text
-rs.initiate()
+```js
+db.grantRolesToUser('admin', [
+  {
+    role: 'clusterAdmin',
+    db: 'admin',
+  },
+]);
+
+rs.initiate();
 ```
 
 ## Running the app

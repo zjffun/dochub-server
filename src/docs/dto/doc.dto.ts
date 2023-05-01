@@ -1,5 +1,7 @@
-export class CreateDocDto {
-  readonly path: string;
+import { IRelationDto } from './relation.dto';
+
+export interface IDocDto {
+  readonly path?: string;
   readonly name?: string;
   readonly desc?: string;
   readonly lang?: string;
@@ -28,5 +30,10 @@ export class CreateDocDto {
   readonly toOriginalContentSha?: string;
   readonly toModifiedContent?: string;
   readonly toModifiedContentSha?: string;
+  readonly toEditingContent?: string;
+  readonly relations?: IRelationDto[];
   readonly pullNumber?: number;
+
+  // update
+  readonly newPath?: string;
 }

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import Relation from '../utils/Relation';
 
 export type DocDocument = HydratedDocument<Doc>;
 
@@ -79,6 +80,12 @@ export class Doc {
 
   @Prop()
   toModifiedContentSha: string;
+
+  @Prop()
+  toEditingContentSha: string;
+
+  @Prop()
+  relations: Relation[];
 
   @Prop()
   pullNumber: number;

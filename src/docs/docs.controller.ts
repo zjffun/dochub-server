@@ -13,7 +13,6 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 import Rules from 'src/decorators/rules';
 import { RolesGuard } from 'src/guards/roles.guard';
-import { RelationsService } from 'src/relations/relations.service';
 import { UsersService } from 'src/users/users.service';
 import { getPageInfo } from 'src/utils/page';
 import { DocsService } from './docs.service';
@@ -23,7 +22,6 @@ import validatePathPermission from './utils/validatePathPermission';
 export class DocsController {
   constructor(
     private readonly docsService: DocsService,
-    private readonly relationsService: RelationsService,
     private readonly usersService: UsersService,
   ) {}
 
@@ -85,16 +83,5 @@ export class DocsController {
   @Rules('admin')
   async delete(@Param('id') id: string) {
     return this.docsService.delete(id);
-  }
-
-  @Delete('relations/:nameId')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Rules('admin')
-  async deleteRelations(@Param('nameId') nameId: string) {
-    if (!nameId) {
-      throw new Error('nameId is required');
-    }
-
-    return this.relationsService.deleteByNameId(nameId);
   }
 }

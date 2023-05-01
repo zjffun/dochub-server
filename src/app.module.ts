@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { mongodbUri } from './config';
 import { DocsModule } from './docs/docs.module';
-import { RelationsModule } from './relations/relations.module';
 import { ContentsModule } from './contents/contents.module';
 import { UsersModule } from './users/users.module';
 
@@ -13,7 +12,6 @@ import { UsersModule } from './users/users.module';
   imports: [
     MongooseModule.forRoot(mongodbUri),
     DocsModule,
-    RelationsModule,
     AuthModule,
     UsersModule,
     ContentsModule,
