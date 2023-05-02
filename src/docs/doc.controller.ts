@@ -18,7 +18,6 @@ import { ContentsService } from 'src/contents/contents.service';
 import { Content } from 'src/contents/schemas/contents.schema';
 import { UsersService } from 'src/users/users.service';
 import { gitHashObject } from 'src/utils/gitHashObject';
-import getRelationRanges from 'src/utils/mdx/getRelationRanges';
 import { DocsService } from './docs.service';
 import { IDocDto } from './dto/doc.dto';
 import { Doc } from './schemas/docs.schema';
@@ -107,15 +106,10 @@ export class DocController {
     toContentInstance.content = toOriginalContent;
     await this.contentsService.createIfNotExist(toContentInstance);
 
-    const ranges = await getRelationRanges(
-      fromOriginalContent,
-      toOriginalContent,
-    );
-
-    const relations = ranges.map((range) => {
+    const relations = createDocDto.relations.map((d) => {
       const relation = new Relation({
-        fromRange: range.fromRange,
-        toRange: range.toRange,
+        fromRange: d.fromRange,
+        toRange: d.toRange,
       });
       return relation;
     });
@@ -271,7 +265,7 @@ export class DocController {
       fromModifiedContent: fromModifiedContent.content,
       toOriginalContent: toOriginalContent.content,
       toModifiedContent: toModifiedContent.content,
-      toEditingContent: toEditingContent.content,
+      toEditingContent: toEditingContent?.content,
     });
   }
 }
