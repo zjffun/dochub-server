@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { User, UsersDocument } from './schemas/users.schema';
+import { Model, SaveOptions, Types } from 'mongoose';
+import { Doc, DocDocument } from 'src/docs/schemas/docs.schema';
+import PERMISSION from 'src/enum/permission';
+import { User, UserDocument } from './schemas/users.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
-    private readonly usersModel: Model<UsersDocument>,
+    private readonly usersModel: Model<UserDocument>,
+    @InjectModel(Doc.name)
+    private readonly docsModel: Model<DocDocument>,
   ) {}
 
   async findOne(condition) {
@@ -18,9 +22,9 @@ export class UsersService {
     return this.usersModel.findById(id).exec();
   }
 
-  async create(user) {
-    const createdUser = await this.usersModel.create(user);
-    return createdUser;
+  async create(user: User, options: SaveOptions = {}) {
+    const createdUser = await this.usersModel.create([user], options);
+    return createdUser[0];
   }
 
   async upsert(condition, set) {
@@ -31,5 +35,63 @@ export class UsersService {
     );
 
     return upsertUser;
+  }
+
+  async validatePathPermission({
+    path,
+    userId,
+  }: {
+    path: string;
+    userId: Types.ObjectId;
+  }) {
+    const user = await this.findById(userId);
+    const { login, docPermissions } = user;
+
+    if (path === `/${login}` || path.startsWith(`/${login}/`)) {
+      return true;
+    }
+
+    if (docPermissions) {
+      const docIdPermissionsMap = Object.fromEntries(
+        docPermissions.map((docPermission) => [
+          docPermission.docId.toString(),
+          docPermission.permissions,
+        ]),
+      );
+
+      const docs = await this.docsModel
+        .find(
+          {
+            _id: {
+              $in: docPermissions.map((p) => p.docId),
+            },
+          },
+          '_id path',
+        )
+        .lean()
+        .exec();
+
+      for (const doc of docs) {
+        const docPath = doc.path;
+        if (path === docPath || path.startsWith(`${docPath}/`)) {
+          const permissions = docIdPermissionsMap[doc._id.toString()];
+          if (!permissions) {
+            continue;
+          }
+
+          if (
+            permissions.includes(PERMISSION.ADMIN) ||
+            permissions.includes(PERMISSION.WRITE)
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+
+    throw new HttpException(
+      `${login} doesn't have permissions for ${path}.`,
+      HttpStatus.FORBIDDEN,
+    );
   }
 }

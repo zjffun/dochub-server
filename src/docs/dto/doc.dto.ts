@@ -7,6 +7,7 @@ export interface IDocDto {
   readonly lang?: string;
   readonly logoUrl?: string;
   readonly docUrl?: string;
+  readonly groupName?: string;
   readonly fromLineNum?: number;
   readonly toLineNum?: number;
   readonly consistentLineNum?: number;

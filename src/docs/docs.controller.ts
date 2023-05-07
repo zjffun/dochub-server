@@ -16,7 +16,6 @@ import { RolesGuard } from 'src/guards/roles.guard';
 import { UsersService } from 'src/users/users.service';
 import { getPageInfo } from 'src/utils/page';
 import { DocsService } from './docs.service';
-import validatePathPermission from './utils/validatePathPermission';
 
 @Controller('api/docs')
 export class DocsController {
@@ -43,10 +42,9 @@ export class DocsController {
       const user = await jwtStrategy.getUser(req);
       const userObjectId = new Types.ObjectId(user.userId);
 
-      await validatePathPermission({
-        usersService: this.usersService,
-        path: path,
-        userObjectId,
+      await this.usersService.validatePathPermission({
+        path,
+        userId: userObjectId,
       });
     }
 

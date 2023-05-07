@@ -22,6 +22,12 @@ export class Doc {
   desc: string;
 
   @Prop()
+  docUrl: string;
+
+  @Prop()
+  logoUrl: string;
+
+  @Prop()
   groupName: string;
 
   @Prop()

@@ -1,8 +1,44 @@
-{
-  "_id": {
-    "$oid": "63df4e5c084d73aca3da3d79"
+[
+  {
+    "_id": {
+      "$oid": "63df4e5c084d73aca3da3d79"
+    },
+    "login": "admin",
+    "password": "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX PASSWORD AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",
+    "role": "admin"
   },
-  "login": "admin",
-  "password": "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX PASSWORD AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",
-  "role": "admin"
-}
+
+  {
+    "login": "user",
+    "role": "reserve"
+  },
+  {
+    "login": "new",
+    "role": "reserve"
+  },
+  {
+    "login": "new-project",
+    "role": "reserve"
+  },
+  {
+    "login": "preview",
+    "role": "reserve"
+  },
+  {
+    "login": "translate",
+    "role": "reserve"
+  },
+
+  {
+    "login": "mdn-zh-cn",
+    "role": "project"
+  },
+  {
+    "login": "rollup-js-zh-cn",
+    "role": "project"
+  },
+  {
+    "login": "jsdom-zh-cn",
+    "role": "project"
+  }
+]

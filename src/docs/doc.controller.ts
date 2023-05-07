@@ -24,7 +24,6 @@ import { Doc } from './schemas/docs.schema';
 import getDocRes from './utils/getDocRes';
 import Relation from './utils/Relation';
 import setUpdateData from './utils/setUpdateData';
-import validatePathPermission from './utils/validatePathPermission';
 @Controller('api/doc')
 export class DocController {
   constructor(
@@ -46,10 +45,9 @@ export class DocController {
 
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    await validatePathPermission({
-      usersService: this.usersService,
+    await this.usersService.validatePathPermission({
       path: docPath,
-      userObjectId,
+      userId: userObjectId,
     });
 
     // check if doc exists
@@ -130,10 +128,9 @@ export class DocController {
 
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    await validatePathPermission({
-      usersService: this.usersService,
+    await this.usersService.validatePathPermission({
       path: docPath,
-      userObjectId,
+      userId: userObjectId,
     });
 
     const doc = await this.docsService.findOne({
@@ -210,10 +207,9 @@ export class DocController {
   ) {
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    await validatePathPermission({
-      usersService: this.usersService,
+    await this.usersService.validatePathPermission({
       path: docPath,
-      userObjectId,
+      userId: userObjectId,
     });
 
     const deleteDoc = await this.docsService.findOne({

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, SaveOptions, Types } from 'mongoose';
 import { Doc, DocDocument } from './schemas/docs.schema';
 import getCondition, { IRawCondition } from './utils/getCondition';
 
@@ -35,9 +35,12 @@ export class DocsService {
     return true;
   }
 
-  async create(collection: Doc) {
-    const createdCollection = await this.DocsModel.create(collection);
-    return createdCollection;
+  async create(collection: Doc, options: SaveOptions = {}) {
+    const createdCollection = await this.DocsModel.create(
+      [collection],
+      options,
+    );
+    return createdCollection[0];
   }
 
   async findAll({

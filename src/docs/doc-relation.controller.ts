@@ -10,7 +10,6 @@ import {
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { DocsService } from 'src/docs/docs.service';
-import validatePathPermission from 'src/docs/utils/validatePathPermission';
 import { UsersService } from 'src/users/users.service';
 import { IRelationDto } from './dto/relation.dto';
 import getDocRes from './utils/getDocRes';
@@ -33,10 +32,9 @@ export class DocRelationController {
 
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    validatePathPermission({
-      usersService: this.usersService,
+    await this.usersService.validatePathPermission({
       path: doc.path,
-      userObjectId,
+      userId: userObjectId,
     });
 
     const relation = new Relation({
@@ -66,10 +64,9 @@ export class DocRelationController {
 
     const userObjectId = new Types.ObjectId(req.user.userId);
 
-    validatePathPermission({
-      usersService: this.usersService,
+    await this.usersService.validatePathPermission({
       path: doc.path,
-      userObjectId,
+      userId: userObjectId,
     });
 
     const relationObjectId = new Types.ObjectId(id);

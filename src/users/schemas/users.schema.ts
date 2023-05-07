@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import PERMISSION from 'src/enum/permission';
+import ROLE from 'src/enum/role';
 
-export type UsersDocument = HydratedDocument<User>;
+export type UserDocument = HydratedDocument<User>;
 
 @Schema({
   collection: 'users',
@@ -14,7 +16,7 @@ export class User {
   password: string;
 
   @Prop()
-  role: string;
+  role: ROLE;
 
   @Prop()
   name: string;
@@ -29,7 +31,10 @@ export class User {
   githubId: string;
 
   @Prop()
-  pathPermissions: string[];
+  docPermissions: {
+    docId: Types.ObjectId;
+    permissions: PERMISSION[];
+  }[];
 
   // TODO: fix vulnerable
   @Prop()
