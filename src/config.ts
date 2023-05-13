@@ -12,6 +12,7 @@ try {
   console.warn("Can't find config.json, use default config.", error);
 }
 
+const apiPrefix = 'api';
 const dataPath = configJson.dataPath || '/usr/share/com.zjffun.dochub';
 const mongodbUri =
   configJson.mongodbUri ||
@@ -24,6 +25,7 @@ const githubClientSecret = configJson.githubClientSecret;
 const githubCallbackURL = configJson.githubCallbackURL;
 
 export {
+  apiPrefix,
   dataPath,
   mongodbUri,
   secret,

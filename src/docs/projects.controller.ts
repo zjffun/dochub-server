@@ -10,17 +10,18 @@ import {
 import { InjectConnection } from '@nestjs/mongoose';
 import mongoose, { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { apiPrefix } from 'src/config';
 import { ContentsService } from 'src/contents/contents.service';
-import PERMISSION from 'src/enum/permission';
-import ROLE from 'src/enum/role';
+import PERMISSION from 'src/enums/permission';
+import ROLE from 'src/enums/role';
 import { User } from 'src/users/schemas/users.schema';
 import { UsersService } from 'src/users/users.service';
 import { DocsService } from './docs.service';
 import { IDocDto } from './dto/doc.dto';
 import { Doc } from './schemas/docs.schema';
 
-@Controller('api/project')
-export class ProjectController {
+@Controller(apiPrefix)
+export class ProjectsController {
   constructor(
     private readonly docsService: DocsService,
     private readonly contentsService: ContentsService,
@@ -28,7 +29,7 @@ export class ProjectController {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
-  @Post()
+  @Post('v1/project')
   @UseGuards(JwtAuthGuard)
   async create(@Req() req, @Body() createDocDto: IDocDto) {
     const { path: docPath } = createDocDto;

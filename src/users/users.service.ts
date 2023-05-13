@@ -2,7 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, SaveOptions, Types } from 'mongoose';
 import { Doc, DocDocument } from 'src/docs/schemas/docs.schema';
-import PERMISSION from 'src/enum/permission';
+import PERMISSION from 'src/enums/permission';
+import ROLE from 'src/enums/role';
 import { User, UserDocument } from './schemas/users.schema';
 
 @Injectable()
@@ -37,18 +38,55 @@ export class UsersService {
     return upsertUser;
   }
 
-  async validatePathPermission({
+  async validatePathWritePermission({
     path,
     userId,
   }: {
     path: string;
     userId: Types.ObjectId;
   }) {
+    const permissionSet = await this.getPathPermissionSet({
+      path,
+      userId,
+    });
+
+    if (
+      permissionSet.has(PERMISSION.ADMIN) ||
+      permissionSet.has(PERMISSION.WRITE)
+    ) {
+      return true;
+    }
+
+    const user = await this.findById(userId);
+    const { login } = user;
+
+    throw new HttpException(
+      `${login} doesn't have permissions for ${path}.`,
+      HttpStatus.FORBIDDEN,
+    );
+  }
+
+  async getPathPermissionSet({
+    path,
+    userId,
+  }: {
+    path: string;
+    userId: Types.ObjectId;
+  }) {
+    const permissionSet = new Set<PERMISSION>();
+
     const user = await this.findById(userId);
     const { login, docPermissions } = user;
 
-    if (path === `/${login}` || path.startsWith(`/${login}/`)) {
-      return true;
+    if (
+      // admin has all permissions
+      user.role === ROLE.ADMIN ||
+      // user has permission to his own path
+      path === `/${login}` ||
+      path.startsWith(`/${login}/`)
+    ) {
+      permissionSet.add(PERMISSION.ADMIN);
+      return permissionSet;
     }
 
     if (docPermissions) {
@@ -79,19 +117,13 @@ export class UsersService {
             continue;
           }
 
-          if (
-            permissions.includes(PERMISSION.ADMIN) ||
-            permissions.includes(PERMISSION.WRITE)
-          ) {
-            return true;
-          }
+          permissions.forEach((permission) => {
+            permissionSet.add(permission);
+          });
         }
       }
     }
 
-    throw new HttpException(
-      `${login} doesn't have permissions for ${path}.`,
-      HttpStatus.FORBIDDEN,
-    );
+    return permissionSet;
   }
 }

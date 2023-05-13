@@ -1,12 +1,17 @@
-## Installation
+# Deploy
+
+TODO: docker
+
+## Clone and Install
 
 ```bash
-$ npm install
+git clone https://github.com/zjffun/dochub-server.git
+yarn install
 ```
 
-### MongoDB Replica Set
+## MongoDB Replica Set
 
-`/opt/homebrew/etc/mongod.conf` add `replication`:
+1 `/opt/homebrew/etc/mongod.conf` add `replication`:
 
 ```text
 systemLog:
@@ -22,13 +27,13 @@ replication:
   replSetName: replocal
 ```
 
-Restart MongoDB:
+2 Restart MongoDB:
 
 ```bash
 brew services restart mongodb-community
 ```
 
-Initiate:
+3 Initiate:
 
 ```bash
 mongosh
@@ -45,20 +50,38 @@ db.grantRolesToUser('admin', [
 rs.initiate();
 ```
 
-## Running the app
+## PM2
+
+1 Installation:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install pm2@latest -g
 ```
 
-## Test
+2 Start:
+
+```bash
+pm2 start dist/main.js --name dochub-server
+```
+
+3 Auto restart after system reboot:
+
+```bash
+pm2 startup systemd
+pm2 save
+```
+
+# Update Deploy (pull and restart)
+
+```bash
+yarn update
+```
+
+# Development
+
+TODO
+
+# Test
 
 ```bash
 # unit tests
@@ -71,37 +94,6 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-# PM2
+# API Spec
 
-Installation:
-
-```bash
-npm install pm2@latest -g
-```
-
-Start:
-
-```bash
-pm2 start dist/main.js --name dochub-server
-```
-
-Auto restart after system reboot:
-
-```bash
-pm2 startup systemd
-pm2 save
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Restful with out `@Param` (only use `@Query`).
