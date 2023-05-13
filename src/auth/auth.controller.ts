@@ -22,13 +22,13 @@ export class AuthController {
   }
 
   @UseGuards(GithubAuthGuard)
-  @Get('v1/auth/github')
+  @Get('auth/github')
   async github() {
     return;
   }
 
   @UseGuards(GithubAuthGuard)
-  @Get('v1/auth/github/callback')
+  @Get('auth/github/callback')
   @Header('CONTENT-TYPE', 'text/html')
   async githubCallback(@Request() req) {
     const { access_token, github_token } = await this.authService.login(
