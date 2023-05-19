@@ -17,7 +17,15 @@
     "role": "reserve"
   },
   {
-    "login": "new-project",
+    "login": "doc",
+    "role": "reserve"
+  },
+  {
+    "login": "project",
+    "role": "reserve"
+  },
+  {
+    "login": "batch",
     "role": "reserve"
   },
   {

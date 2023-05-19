@@ -205,6 +205,30 @@ export class DocsController {
     };
   }
 
+  @Post('v1/docs')
+  @UseGuards(JwtAuthGuard)
+  async batchCreate(
+    @Req() req,
+    @Body()
+    batchCreateDocsDto: IDocDto & {
+      fromGlobs: string;
+      toGlobs: string;
+    },
+  ) {
+    const { path: docPath } = batchCreateDocsDto;
+
+    const userObjectId = new Types.ObjectId(req.user.userId);
+
+    await this.usersService.validatePathWritePermission({
+      path: docPath,
+      userId: userObjectId,
+    });
+
+    // TODO: implement batch create
+
+    return {};
+  }
+
   @Post('v1/fork-doc')
   @UseGuards(JwtAuthGuard)
   async forkDoc(
