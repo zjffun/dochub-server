@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Post,
@@ -11,27 +12,51 @@ import { InjectConnection } from '@nestjs/mongoose';
 import mongoose, { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { apiPrefix } from 'src/config';
-import { ContentsService } from 'src/contents/contents.service';
 import PERMISSION from 'src/enums/permission';
 import ROLE from 'src/enums/role';
 import { User } from 'src/users/schemas/users.schema';
 import { UsersService } from 'src/users/users.service';
-import { DocsService } from './docs.service';
-import { IDocDto } from './dto/doc.dto';
-import { Doc } from './schemas/docs.schema';
+import { IProjectDto } from './dto/project.dto';
+import { ProjectsService } from './projects.service';
+import { Project } from './schemas/projects.schema';
+import { DocTreeService } from 'src/docTree/docTree.service';
 
 @Controller(apiPrefix)
 export class ProjectsController {
   constructor(
-    private readonly docsService: DocsService,
-    private readonly contentsService: ContentsService,
+    private readonly projectsService: ProjectsService,
+    private readonly docTreeService: DocTreeService,
     private readonly usersService: UsersService,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
+  @Get('v1/projects')
+  async get() {
+    const list = await this.projectsService.findAll();
+    const total = await this.projectsService.count();
+    const resultList = [];
+    for (const item of list) {
+      const docTreeNode = await this.docTreeService.findOne({
+        path: item.path,
+      });
+
+      resultList.push({
+        ...item.toJSON(),
+        ...docTreeNode.toJSON(),
+      });
+    }
+
+    const result = {
+      list: resultList,
+      total,
+    };
+
+    return result;
+  }
+
   @Post('v1/project')
   @UseGuards(JwtAuthGuard)
-  async create(@Req() req, @Body() createDocDto: IDocDto) {
+  async create(@Req() req, @Body() createDocDto: IProjectDto) {
     const { path: docPath } = createDocDto;
 
     const userObjectId = new Types.ObjectId(req.user.userId);
@@ -46,7 +71,7 @@ export class ProjectsController {
     const projectUserLogin = docPath.substring(1);
 
     // check if doc exists
-    const docCheckResult = await this.docsService.findOne({
+    const docCheckResult = await this.projectsService.findOne({
       path: docPath,
     });
 
@@ -62,7 +87,7 @@ export class ProjectsController {
       );
     }
 
-    const doc = new Doc();
+    const doc = new Project();
 
     doc.createUserObjectId = userObjectId;
     doc.path = docPath;
@@ -79,7 +104,7 @@ export class ProjectsController {
     user.role = ROLE.PROJECT;
 
     await this.connection.transaction(async (session) => {
-      const currentDoc = await this.docsService.create(doc, { session });
+      const currentDoc = await this.projectsService.create(doc, { session });
       await this.usersService.create(user, { session });
 
       // add permission

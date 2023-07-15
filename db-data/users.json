@@ -36,6 +36,10 @@
     "login": "translate",
     "role": "reserve"
   },
+  {
+    "login": "global-admin",
+    "role": "reserve"
+  },
 
   {
     "login": "mdn-zh-cn",

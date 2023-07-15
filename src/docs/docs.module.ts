@@ -5,7 +5,6 @@ import { UsersModule } from 'src/users/users.module';
 import { DocRelationsController } from './doc-relations.controller';
 import { DocsController } from './docs.controller';
 import { DocsService } from './docs.service';
-import { ProjectsController } from './projects.controller';
 import { Doc, DocSchema } from './schemas/docs.schema';
 
 @Module({
@@ -14,7 +13,7 @@ import { Doc, DocSchema } from './schemas/docs.schema';
     ContentsModule,
     UsersModule,
   ],
-  controllers: [DocsController, DocRelationsController, ProjectsController],
+  controllers: [DocsController, DocRelationsController],
   providers: [DocsService],
   exports: [DocsService],
 })

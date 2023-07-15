@@ -2,15 +2,6 @@ import { IRelationDto } from './relation.dto';
 
 export interface IDocDto {
   readonly path?: string;
-  readonly name?: string;
-  readonly desc?: string;
-  readonly lang?: string;
-  readonly logoUrl?: string;
-  readonly docUrl?: string;
-  readonly groupName?: string;
-  readonly fromLineNum?: number;
-  readonly toLineNum?: number;
-  readonly consistentLineNum?: number;
   readonly fromOwner?: string;
   readonly fromRepo?: string;
   readonly fromBranch?: string;

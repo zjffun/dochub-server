@@ -13,33 +13,6 @@ export class Doc {
   depth: number;
 
   @Prop()
-  name: string;
-
-  @Prop()
-  lang: string;
-
-  @Prop()
-  desc: string;
-
-  @Prop()
-  docUrl: string;
-
-  @Prop()
-  logoUrl: string;
-
-  @Prop()
-  groupName: string;
-
-  @Prop()
-  fromLineNum: number;
-
-  @Prop()
-  toLineNum: number;
-
-  @Prop()
-  consistentLineNum: number;
-
-  @Prop()
   fromOwner: string;
 
   @Prop()

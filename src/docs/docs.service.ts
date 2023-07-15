@@ -11,30 +11,6 @@ export class DocsService {
     private readonly DocsModel: Model<DocDocument>,
   ) {}
 
-  async setProgressInfo(nameId: string) {
-    const condition = {
-      nameId: nameId,
-    };
-
-    const collection = await this.DocsModel.findOne(condition).exec();
-
-    // const fromLineNum = await this.relationsService.getFromLineNum(condition);
-
-    // const toLineNum = await this.relationsService.getToLineNum(condition);
-
-    // const consistentLineNum = await this.relationsService.getConsistentLineNum(
-    //   condition,
-    // );
-
-    // collection.fromLineNum = fromLineNum;
-    // collection.toLineNum = toLineNum;
-    // collection.consistentLineNum = consistentLineNum;
-
-    await collection.save();
-
-    return true;
-  }
-
   async create(collection: Doc, options: SaveOptions = {}) {
     const createdCollection = await this.DocsModel.create(
       [collection],
