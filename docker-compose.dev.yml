@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0.1
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+    volumes:
+      - db:/data/db
+  app:
+    depends_on:
+      - mongodb
+    build:
+      context: .
+      target: development
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - MONGODB_URI=$MONGODB_URI
+    stdin_open: true
+    tty: true
+    # Run a command against the development stage of the image
+    command: npm run start:dev
+    volumes:
+      - .:/usr/src/app
+      # Prevents node_modules from being overwritten by the container
+      - /usr/src/app/node_modules
+
+volumes:
+  db:

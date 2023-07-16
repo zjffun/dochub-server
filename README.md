@@ -1,3 +1,9 @@
+# Development
+
+```bash
+docker compose -f docker-compose.dev.yml up --build
+```
+
 # Deploy
 
 TODO: docker
@@ -77,9 +83,7 @@ pm2 save
 yarn update
 ```
 
-# Development
 
-TODO
 
 # Test
 

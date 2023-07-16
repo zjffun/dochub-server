@@ -4,7 +4,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { mongodbUri } from './config';
 import { ContentsModule } from './contents/contents.module';
 import { DocsModule } from './docs/docs.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -13,7 +12,7 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(mongodbUri),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     ScheduleModule.forRoot(),
     DocsModule,
     ProjectsModule,
