@@ -11,7 +11,7 @@ describe('DocsController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         MongooseModule.forRoot(
-          'mongodb://127.0.0.1:27017/relation?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.1',
+          'mongodb://127.0.0.1:27017/dochub?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.1',
         ),
         DocsModule,
       ],
