@@ -28,7 +28,6 @@ COPY --chown=node:node yarn.lock ./
 COPY --chown=node:node tsconfig.json ./
 COPY --chown=node:node tsconfig.build.json ./
 COPY --chown=node:node nest-cli.json ./
-COPY --chown=node:node .env.vault ./
 COPY --chown=node:node src ./src
 
 ENV NODE_ENV production
@@ -45,6 +44,9 @@ USER node
 
 FROM node:18-alpine As production
 
+WORKDIR /usr/src/app
+
+COPY --chown=node:node .env.vault ./
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
