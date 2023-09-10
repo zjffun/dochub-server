@@ -1,8 +1,0 @@
-{
-  "dataPath": "/usr/share/com.zjffun.dochub",
-  "mongodbUri": "mongodb://127.0.0.1:27017/relation?directConnection=true",
-  "secret": "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",
-  "githubClientID": "your github client id",
-  "githubClientSecret": "your github client secret",
-  "githubCallbackURL": "http://127.0.0.1:3001/api/auth/github/callback"
-}
