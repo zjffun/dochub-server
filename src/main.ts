@@ -10,7 +10,10 @@ async function bootstrap() {
     rawBody: true,
   });
 
+  app.enableCors({ origin: ['https://dochub.zjffun.com'] });
+
   app.useBodyParser('json', { limit: '10mb' });
+
   await app.listen(30001);
 }
 

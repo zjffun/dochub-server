@@ -19,9 +19,9 @@ sudo docker logs dochub-server
 NGINX config:
 
 ```bash
-sudo cat <<'EOF' > /etc/nginx/sites-enabled/dochub-zjffun-com
+sudo cat <<'EOF' > /etc/nginx/sites-enabled/dochub-server-zjffun-com
 server {
-    server_name dochub.zjffun.com;
+    server_name dochub-server.zjffun.com;
     listen 80;
 
     location / {
