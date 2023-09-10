@@ -28,7 +28,8 @@ COPY --chown=node:node yarn.lock ./
 COPY --chown=node:node tsconfig.json ./
 COPY --chown=node:node tsconfig.build.json ./
 COPY --chown=node:node nest-cli.json ./
-COPY --chown=node:node src ./
+COPY --chown=node:node .env.vault ./
+COPY --chown=node:node src ./src
 
 ENV NODE_ENV production
 
