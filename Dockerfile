@@ -23,10 +23,12 @@ WORKDIR /usr/src/app
 
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
 
-COPY --chown=node:node ./tsconfig.json ./tsconfig.json
-COPY --chown=node:node ./tsconfig.build.json ./tsconfig.build.json
-COPY --chown=node:node ./nest-cli.json ./nest-cli.json
-COPY --chown=node:node ./src ./src
+COPY --chown=node:node package.json ./
+COPY --chown=node:node yarn.lock ./
+COPY --chown=node:node tsconfig.json ./
+COPY --chown=node:node tsconfig.build.json ./
+COPY --chown=node:node nest-cli.json ./
+COPY --chown=node:node src ./
 
 ENV NODE_ENV production
 
