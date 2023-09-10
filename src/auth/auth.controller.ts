@@ -43,10 +43,21 @@ export class AuthController {
         </head>
         <body>
           <script>
-            localStorage.setItem('access_token', '${access_token}');
             // TODO: fix vulnerable
-            localStorage.setItem('github_token', '${github_token}');
-            window.opener.postMessage({ type: 'signInSuccess' });
+            let targetOrigin = 'https://dochub.zjffun.com';
+
+            if (window.location.hostname === '127.0.0.1') {
+              targetOrigin = window.location.origin;
+            }
+
+            window.opener.postMessage(
+              { 
+                type: 'signInSuccess',
+                access_token, '${access_token}',
+                github_token, '${github_token}'
+              },
+              targetOrigin
+            );
             window.close();
           </script>
         </body>
