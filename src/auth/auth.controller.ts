@@ -53,8 +53,8 @@ export class AuthController {
             window.opener.postMessage(
               { 
                 type: 'signInSuccess',
-                access_token, '${access_token}',
-                github_token, '${github_token}'
+                access_token: '${access_token}',
+                github_token: '${github_token}'
               },
               targetOrigin
             );
