@@ -9,8 +9,11 @@ Open: http://127.0.0.1:3001/
 # Docker Deploy
 
 ```bash
-sudo docker run -e 
-DOTENV_KEY="dotenv://:key_1234@dotenv.org/vault/.env.vault?environment=production" -d --restart=always --name dochub-server -p 30001:30001 zjffun/dochub-server
+sudo docker stop dochub-server
+sudo docker remove dochub-server
+sudo docker pull zjffun/dochub-server
+sudo docker run -e DOTENV_KEY="dotenv://:key_1234@dotenv.org/vault/.env.vault?environment=production" -d --restart=always --name dochub-server -p 30001:30001 zjffun/dochub-server:latest
+sudo docker logs dochub-server
 ```
 
 NGINX config:
