@@ -4,9 +4,35 @@
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-# Deploy
+Open: http://127.0.0.1:3001/
 
-TODO: docker
+# Docker Deploy
+
+```bash
+sudo docker run -e 
+DOTENV_KEY="dotenv://:key_1234@dotenv.org/vault/.env.vault?environment=production" -d --restart=always --name dochub-server -p 30001:30001 zjffun/dochub-server
+```
+
+NGINX config:
+
+```bash
+sudo cat <<'EOF' > /etc/nginx/sites-enabled/dochub-zjffun-com
+server {
+    server_name dochub.zjffun.com;
+    listen 80;
+
+    location / {
+        proxy_pass http://localhost:30001;
+    }
+}
+EOF
+```
+
+# API Spec
+
+Restful with out `@Param` (only use `@Query`).
+
+# Manual Deploy
 
 ## Clone and Install
 
@@ -76,28 +102,3 @@ pm2 start dist/main.js --name dochub-server
 pm2 startup systemd
 pm2 save
 ```
-
-# Update Deploy (pull and restart)
-
-```bash
-yarn update
-```
-
-
-
-# Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-# API Spec
-
-Restful with out `@Param` (only use `@Query`).
