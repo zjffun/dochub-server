@@ -42,7 +42,7 @@ export class ProjectsController {
 
       resultList.push({
         ...item.toJSON(),
-        ...docTreeNode.toJSON(),
+        ...docTreeNode?.toJSON?.(),
       });
     }
 
