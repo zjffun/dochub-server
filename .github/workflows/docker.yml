@@ -3,7 +3,7 @@ name: docker
 on:
   push:
     branches:
-      - "main"
+      - main
 
 jobs:
   build:
@@ -25,3 +25,20 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dochub-server:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            sudo docker pull zjffun/dochub-server
+            sudo docker stop dochub-server
+            sudo docker remove dochub-server
+            sudo docker run -e DOTENV_KEY="${{ secrets.DOTENV_KEY }}" -d --restart=always --name dochub-server -p 30001:30001 zjffun/dochub-server:latest
