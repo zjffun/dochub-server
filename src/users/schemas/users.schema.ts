@@ -31,8 +31,8 @@ export class User {
   githubId: string;
 
   @Prop()
-  docPermissions: {
-    docId: Types.ObjectId;
+  projectPermissions: {
+    projectId: Types.ObjectId;
     permissions: PERMISSION[];
   }[];
 

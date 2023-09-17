@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Doc, DocSchema } from 'src/docs/schemas/docs.schema';
+import { Project, ProjectSchema } from 'src/projects/schemas/projects.schema';
 import { User, UserSchema } from './schemas/users.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -10,8 +10,8 @@ import { UsersService } from './users.service';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       {
-        name: Doc.name,
-        schema: DocSchema,
+        name: Project.name,
+        schema: ProjectSchema,
       },
     ]),
     UsersModule,

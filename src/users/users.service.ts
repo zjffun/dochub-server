@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, SaveOptions, Types } from 'mongoose';
-import { Doc, DocDocument } from 'src/docs/schemas/docs.schema';
 import PERMISSION from 'src/enums/permission';
 import ROLE from 'src/enums/role';
+import { Project, ProjectDocument } from 'src/projects/schemas/projects.schema';
 import { User, UserDocument } from './schemas/users.schema';
 
 @Injectable()
@@ -11,8 +11,8 @@ export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly usersModel: Model<UserDocument>,
-    @InjectModel(Doc.name)
-    private readonly docsModel: Model<DocDocument>,
+    @InjectModel(Project.name)
+    private readonly projectsModel: Model<ProjectDocument>,
   ) {}
 
   async findOne(condition) {
@@ -76,7 +76,7 @@ export class UsersService {
     const permissionSet = new Set<PERMISSION>();
 
     const user = await this.findById(userId);
-    const { login, docPermissions } = user;
+    const { login, projectPermissions } = user;
 
     if (
       // admin has all permissions
@@ -89,19 +89,19 @@ export class UsersService {
       return permissionSet;
     }
 
-    if (docPermissions) {
-      const docIdPermissionsMap = Object.fromEntries(
-        docPermissions.map((docPermission) => [
-          docPermission.docId.toString(),
-          docPermission.permissions,
+    if (projectPermissions) {
+      const projectIdPermissionsMap = Object.fromEntries(
+        projectPermissions.map((projectPermission) => [
+          projectPermission.projectId.toString(),
+          projectPermission.permissions,
         ]),
       );
 
-      const docs = await this.docsModel
+      const projects = await this.projectsModel
         .find(
           {
             _id: {
-              $in: docPermissions.map((p) => p.docId),
+              $in: projectPermissions.map((p) => p.projectId),
             },
           },
           '_id path',
@@ -109,10 +109,10 @@ export class UsersService {
         .lean()
         .exec();
 
-      for (const doc of docs) {
-        const docPath = doc.path;
-        if (path === docPath || path.startsWith(`${docPath}/`)) {
-          const permissions = docIdPermissionsMap[doc._id.toString()];
+      for (const project of projects) {
+        const projectPath = project.path;
+        if (path === projectPath || path.startsWith(`${projectPath}/`)) {
+          const permissions = projectIdPermissionsMap[project._id.toString()];
           if (!permissions) {
             continue;
           }

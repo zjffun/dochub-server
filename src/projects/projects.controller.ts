@@ -104,13 +104,15 @@ export class ProjectsController {
     user.role = ROLE.PROJECT;
 
     await this.connection.transaction(async (session) => {
-      const currentDoc = await this.projectsService.create(doc, { session });
+      const currentProject = await this.projectsService.create(doc, {
+        session,
+      });
       await this.usersService.create(user, { session });
 
       // add permission
       const currentUser = await this.usersService.findById(req.user.userId);
-      currentUser.docPermissions.push({
-        docId: currentDoc._id,
+      currentUser.projectPermissions.push({
+        projectId: currentProject._id,
         permissions: [PERMISSION.ADMIN],
       });
       await currentUser.save({ session });

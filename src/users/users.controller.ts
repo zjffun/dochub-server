@@ -25,7 +25,7 @@ export class UsersController {
     const { pick } = await import('lodash-es');
     const jwtUser = req.user as IJwtUser;
     const user = await this.usersService.findById(jwtUser.userId);
-    
+
     if (!user) {
       throw new Error('User not found');
     }
