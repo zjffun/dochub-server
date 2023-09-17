@@ -29,6 +29,7 @@ services:
       - .:/usr/src/app
       # Prevents node_modules from being overwritten by the container
       - /usr/src/app/node_modules
+      - /usr/share/com.zjffun.dochub:/usr/share/com.zjffun.dochub
 
 volumes:
   db:

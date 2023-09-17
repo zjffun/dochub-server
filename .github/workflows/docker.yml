@@ -41,4 +41,9 @@ jobs:
             sudo docker pull zjffun/dochub-server
             sudo docker stop dochub-server
             sudo docker remove dochub-server
-            sudo docker run -e DOTENV_KEY="${{ secrets.DOTENV_KEY }}" -d --restart=always --name dochub-server -p 30001:30001 zjffun/dochub-server:latest
+            sudo docker run --name dochub-server\
+             -e DOTENV_KEY="${{ secrets.DOTENV_KEY }}"\
+             -p 30001:30001\
+             -v /usr/share/com.zjffun.dochub:/usr/share/com.zjffun.dochub\
+             -d --restart=always\
+             zjffun/dochub-server:latest
